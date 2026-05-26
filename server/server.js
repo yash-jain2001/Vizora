@@ -8,7 +8,7 @@ const { Server } = require('socket.io')
 
 const connectDB = require('./config/db')
 
-const connectMQTT = require('./services/mqttServices')
+const connectMQTT = require('./services/mqttService')
 
 dotenv.config()
 
@@ -40,6 +40,11 @@ app.use(
 app.use(
   '/api/datasources',
   require('./routes/datasourceRoutes')
+)
+
+app.use(
+  '/api/auth',
+  require('./routes/authRoutes')
 )
 
 io.on('connection', (socket) => {
