@@ -8,6 +8,8 @@ const { Server } = require('socket.io')
 
 const connectDB = require('./config/db')
 
+const connectMQTT = require('./services/mqttServices')
+
 dotenv.config()
 
 connectDB()
@@ -23,28 +25,26 @@ const io = new Server(server, {
   },
 })
 
+/* MQTT */
+connectMQTT(io)
+
 app.use(cors())
 app.use(express.json())
 
 /* ROUTES */
-app.use('/api/dashboard', require('./routes/dashboardRoutes'))
+app.use(
+  '/api/dashboard',
+  require('./routes/dashboardRoutes')
+)
 
-/* SOCKET CONNECTION */
+app.use(
+  '/api/datasources',
+  require('./routes/datasourceRoutes')
+)
+
 io.on('connection', (socket) => {
 
   console.log('Client Connected')
-
-  setInterval(() => {
-
-    const liveData = {
-      temperature: Math.floor(Math.random() * 100),
-      energy: Math.floor(Math.random() * 100),
-      time: new Date().toLocaleTimeString(),
-    }
-
-    socket.emit('live-data', liveData)
-
-  }, 3000)
 
   socket.on('disconnect', () => {
     console.log('Client Disconnected')
