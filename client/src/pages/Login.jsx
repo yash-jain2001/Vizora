@@ -1,99 +1,119 @@
-import {
-  useContext,
-  useState,
-} from "react";
+import { useContext, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import API from "../api/axios";
 
 import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const { login } = useContext(AuthContext);
 
-  const { login } =
-    useContext(AuthContext)
-
-  const [formData, setFormData] =
-    useState({
-      email: '',
-      password: '',
-    })
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
   const handleChange = (e) => {
-
     setFormData({
       ...formData,
-      [e.target.name]:
-        e.target.value,
-    })
-
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
-
-    e.preventDefault()
+    e.preventDefault();
 
     try {
+      const res = await API.post("/auth/login", formData);
 
-      const res = await API.post(
-        '/auth/login',
-        formData
-      )
+      login(res.data);
 
-      login(res.data)
-
-      navigate('/dashboard')
-
+      navigate("/dashboard");
     } catch (error) {
+      console.log(error);
 
-      console.log(error)
-
-      alert('Invalid credentials')
-
+      alert("Invalid credentials");
     }
-
-  }
+  };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-[#111827] text-white">
+    <div className="relative h-screen w-screen flex items-center justify-center bg-brand-dark overflow-hidden text-white">
+      {/* Background Radial Glows */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none"></div>
+      
+      {/* Visual background grid pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293d10_1px,transparent_1px),linear-gradient(to_bottom,#1f293d10_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]"></div>
 
       <form
         onSubmit={handleSubmit}
-        className="bg-[#1F2937] p-10 rounded-2xl w-[400px] shadow-2xl"
+        className="relative z-10 bg-brand-card/60 backdrop-blur-xl border border-white/5 p-10 rounded-3xl w-[420px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col"
       >
+        <div className="flex flex-col items-center mb-8">
+          <div className="h-12 w-12 rounded-2xl bg-linear-to-tr from-emerald-500 to-teal-400 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+            <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+            </svg>
+          </div>
+          <h1 className="text-4xl font-extrabold bg-linear-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent tracking-tight">
+            Vizora
+          </h1>
+          <p className="text-sm text-slate-400 mt-2 font-medium">
+            IoT Monitoring & Analytics Platform
+          </p>
+        </div>
 
-        <h1 className="text-4xl font-bold mb-8 text-center">
-          Mini Grafana
-        </h1>
+        <div className="space-y-5 mb-8">
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              Email Address
+            </label>
+            <div className="relative">
+              <input
+                type="email"
+                name="email"
+                placeholder="name@company.com"
+                onChange={handleChange}
+                className="w-full px-4 py-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
+                required
+              />
+            </div>
+          </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-          className="w-full p-3 rounded-lg bg-[#374151] mb-4 outline-none"
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-          className="w-full p-3 rounded-lg bg-[#374151] mb-6 outline-none"
-        />
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type="password"
+                name="password"
+                placeholder="••••••••"
+                onChange={handleChange}
+                className="w-full px-4 py-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
+                required
+              />
+            </div>
+          </div>
+        </div>
 
         <button
           type="submit"
-          className="w-full bg-green-500 hover:bg-green-600 transition-all duration-300 p-3 rounded-lg font-bold"
+          className="w-full py-4 px-6 rounded-xl bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-base transition-all duration-300 shadow-[0_4px_20px_rgba(16,185,129,0.25)] hover:shadow-[0_4px_25px_rgba(16,185,129,0.4)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
         >
-          Login
+          Sign In
         </button>
 
+        <p className="text-center mt-6 text-sm text-slate-400">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors duration-200">
+            Register
+          </Link>
+        </p>
       </form>
-
     </div>
   );
 };
