@@ -9,6 +9,7 @@ import Register from "../pages/Register";
 
 import Dashboard from "../pages/Dashboard";
 import Datasources from "../pages/Datasources";
+import Alerts from "../pages/Alert";
 import Admin from "../pages/Admin";
 
 import ProtectedRoute from "./ProtectedRoute";
@@ -21,8 +22,6 @@ const AppRoutes = () => {
 
       <Routes>
 
-        {/* PUBLIC ROUTES */}
-
         <Route
           path="/"
           element={<Login />}
@@ -32,8 +31,6 @@ const AppRoutes = () => {
           path="/register"
           element={<Register />}
         />
-
-        {/* PROTECTED ROUTES */}
 
         <Route
           path="/dashboard"
@@ -53,7 +50,14 @@ const AppRoutes = () => {
           }
         />
 
-        {/* ADMIN ONLY */}
+        <Route
+          path="/alerts"
+          element={
+            <ProtectedRoute>
+              <Alerts />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/admin"

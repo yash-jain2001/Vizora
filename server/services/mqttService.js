@@ -1,27 +1,81 @@
-const mqtt = require("mqtt");
+const mqtt = require('mqtt')
+
+const Alert = require('../models/Alert')
 
 const connectMQTT = (io) => {
-  const client = mqtt.connect("mqtt://broker.hivemq.com");
 
-  client.on("connect", () => {
-    console.log("MQTT Connected");
+  const client = mqtt.connect(
+    'mqtt://broker.hivemq.com'
+  )
 
-    client.subscribe("Vizora/temperature");
-  });
+  client.on('connect', () => {
 
-  client.on("message", (topic, message) => {
-    const value = message.toString();
+    console.log('MQTT Connected')
 
-    console.log(`MQTT Message: ${value}`);
+    client.subscribe(
+      'vizora/temperature'
+    )
 
-    const liveData = {
-      temperature: Number(value),
-      energy: Math.floor(Math.random() * 100),
-      time: new Date().toLocaleTimeString(),
-    };
+  })
 
-    io.emit("live-data", liveData);
-  });
-};
+  client.on(
+    'message',
+    async (
+      topic,
+      message
+    ) => {
 
-module.exports = connectMQTT;
+      const value =
+        Number(
+          message.toString()
+        )
+
+      console.log(
+        `MQTT Message: ${value}`
+      )
+
+      const liveData = {
+        temperature: value,
+        energy:
+          Math.floor(
+            Math.random() * 100
+          ),
+        time:
+          new Date().toLocaleTimeString(),
+      }
+
+      /* EMIT LIVE DATA */
+      io.emit(
+        'live-data',
+        liveData
+      )
+
+      /* ALERT CONDITION */
+      if (value > 70) {
+
+        const alert =
+          await Alert.create({
+            title:
+              'High Temperature',
+            message:
+              `Temperature exceeded threshold: ${value}°C`,
+            severity:
+              value > 90
+                ? 'high'
+                : 'medium',
+            value,
+          })
+
+        io.emit(
+          'new-alert',
+          alert
+        )
+
+      }
+
+    }
+  )
+
+}
+
+module.exports = connectMQTT

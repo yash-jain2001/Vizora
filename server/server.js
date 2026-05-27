@@ -52,6 +52,11 @@ app.use(
   require('./routes/dashboardCrudRoutes')
 )
 
+app.use(
+  '/api/alerts',
+  require('./routes/alertRoutes')
+)
+
 io.on('connection', (socket) => {
 
   console.log('Client Connected')
@@ -63,7 +68,7 @@ io.on('connection', (socket) => {
 })
 
 app.get('/', (req, res) => {
-  res.send('Mini Grafana Backend Running 🚀')
+  res.send('Vizora Backend Running 🚀')
 })
 
 const PORT = process.env.PORT || 5000
