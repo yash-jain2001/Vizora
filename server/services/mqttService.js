@@ -1,33 +1,27 @@
-const mqtt = require('mqtt')
+const mqtt = require("mqtt");
 
 const connectMQTT = (io) => {
+  const client = mqtt.connect("mqtt://broker.hivemq.com");
 
-  const client = mqtt.connect('mqtt://broker.hivemq.com')
+  client.on("connect", () => {
+    console.log("MQTT Connected");
 
-  client.on('connect', () => {
+    client.subscribe("Vizora/temperature");
+  });
 
-    console.log('MQTT Connected')
+  client.on("message", (topic, message) => {
+    const value = message.toString();
 
-    client.subscribe('minigrafana/temperature')
-
-  })
-
-  client.on('message', (topic, message) => {
-
-    const value = message.toString()
-
-    console.log(`MQTT Message: ${value}`)
+    console.log(`MQTT Message: ${value}`);
 
     const liveData = {
       temperature: Number(value),
       energy: Math.floor(Math.random() * 100),
       time: new Date().toLocaleTimeString(),
-    }
+    };
 
-    io.emit('live-data', liveData)
+    io.emit("live-data", liveData);
+  });
+};
 
-  })
-
-}
-
-module.exports = connectMQTT
+module.exports = connectMQTT;

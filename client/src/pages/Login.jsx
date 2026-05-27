@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 
 import { useNavigate, Link } from "react-router-dom";
+import logo from "../assets/logo.jpeg"
 
 import API from "../api/axios";
 
@@ -53,14 +54,16 @@ const Login = () => {
         className="relative z-10 bg-brand-card/60 backdrop-blur-xl border border-white/5 p-10 rounded-3xl w-[420px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col"
       >
         <div className="flex flex-col items-center mb-8">
-          <div className="h-12 w-12 rounded-2xl bg-linear-to-tr from-emerald-500 to-teal-400 flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(16,185,129,0.4)]">
-            <svg className="w-6 h-6 text-slate-900" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-            </svg>
-          </div>
+          <div className="flex items-center gap-2">
+            <img
+            src={logo}
+            alt="logo"
+            className="w-15 h-15 rounded-full object-cover"
+          />
           <h1 className="text-4xl font-extrabold bg-linear-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent tracking-tight">
             Vizora
           </h1>
+          </div>
           <p className="text-sm text-slate-400 mt-2 font-medium">
             IoT Monitoring & Analytics Platform
           </p>

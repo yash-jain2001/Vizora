@@ -1,22 +1,15 @@
-const mqtt = require('mqtt')
+const mqtt = require("mqtt");
 
-const client = mqtt.connect('mqtt://broker.hivemq.com')
+const client = mqtt.connect("mqtt://broker.hivemq.com");
 
-client.on('connect', () => {
-
-  console.log('Publisher Connected')
+client.on("connect", () => {
+  console.log("Publisher Connected");
 
   setInterval(() => {
+    const randomTemp = Math.floor(Math.random() * 100);
 
-    const randomTemp = Math.floor(Math.random() * 100)
+    client.publish("Vizora/temperature", randomTemp.toString());
 
-    client.publish(
-      'minigrafana/temperature',
-      randomTemp.toString()
-    )
-
-    console.log(`Published: ${randomTemp}`)
-
-  }, 3000)
-
-})
+    console.log(`Published: ${randomTemp}`);
+  }, 3000);
+});
