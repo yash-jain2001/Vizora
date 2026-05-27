@@ -5,6 +5,8 @@ import BarChartWidget from "../components/charts/BarChartWidget";
 
 import StatsCard from "../components/widgets/StatsCard";
 
+import DashboardSwitcher from "../components/widgets/DashboardSwitcher";
+
 import {
   useEffect,
   useState,
@@ -20,16 +22,15 @@ const Dashboard = () => {
     useState({})
 
   const [widgets, setWidgets] =
-    useState([
-      {
-        type: 'line-chart',
-        title: 'Temperature',
-      },
-      {
-        type: 'bar-chart',
-        title: 'Energy Usage',
-      },
-    ])
+    useState([])
+
+  const [dashboards, setDashboards] =
+    useState([])
+
+  const [
+    selectedDashboard,
+    setSelectedDashboard,
+  ] = useState('')
 
   /* FETCH STATS */
   useEffect(() => {
@@ -80,6 +81,65 @@ const Dashboard = () => {
 
   }, [])
 
+  /* FETCH DASHBOARDS */
+  const fetchDashboards =
+    async () => {
+
+      try {
+
+        const res =
+          await API.get(
+            '/dashboards'
+          )
+
+        setDashboards(
+          res.data
+        )
+
+      } catch (error) {
+
+        console.log(error)
+
+      }
+
+    }
+
+  useEffect(() => {
+    fetchDashboards()
+  }, [])
+
+  /* LOAD DASHBOARD */
+  useEffect(() => {
+
+    const loadDashboard =
+      async () => {
+
+        if (!selectedDashboard)
+          return
+
+        try {
+
+          const res =
+            await API.get(
+              `/dashboards/${selectedDashboard}`
+            )
+
+          setWidgets(
+            res.data.widgets
+          )
+
+        } catch (error) {
+
+          console.log(error)
+
+        }
+
+      }
+
+    loadDashboard()
+
+  }, [selectedDashboard])
+
   /* ADD WIDGET */
   const addWidget = (type) => {
 
@@ -122,10 +182,12 @@ const Dashboard = () => {
           '/dashboards',
           {
             title:
-              'Main Dashboard',
+              `Dashboard ${Date.now()}`,
             widgets,
           }
         )
+
+        fetchDashboards()
 
         alert(
           'Dashboard Saved'
@@ -159,6 +221,18 @@ const Dashboard = () => {
 
         {/* ACTIONS */}
         <div className="flex gap-4 flex-wrap">
+
+          <DashboardSwitcher
+            dashboards={
+              dashboards
+            }
+            selectedDashboard={
+              selectedDashboard
+            }
+            setSelectedDashboard={
+              setSelectedDashboard
+            }
+          />
 
           <button
             onClick={() =>
