@@ -1,6 +1,3 @@
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
-
 import DashboardLayout from "../components/layout/DashboardLayout";
 
 import LineChartWidget from "../components/charts/LineChartWidget";
@@ -8,59 +5,192 @@ import BarChartWidget from "../components/charts/BarChartWidget";
 
 import StatsCard from "../components/widgets/StatsCard";
 
+import {
+  useEffect,
+  useState,
+} from "react";
+
 import API from "../api/axios";
 
 import socket from "../hooks/useSocket";
 
 const Dashboard = () => {
-  const { user } = useContext(AuthContext);
-  const [stats, setStats] = useState({});
 
+  const [stats, setStats] =
+    useState({})
+
+  const [widgets, setWidgets] =
+    useState([
+      {
+        type: 'line-chart',
+        title: 'Temperature',
+      },
+      {
+        type: 'bar-chart',
+        title: 'Energy Usage',
+      },
+    ])
+
+  /* FETCH STATS */
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await API.get('/dashboard/stats');
-        setStats(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
-    fetchStats();
-  }, []);
+    const fetchStats =
+      async () => {
+
+        try {
+
+          const res =
+            await API.get(
+              '/dashboard/stats'
+            )
+
+          setStats(res.data)
+
+        } catch (error) {
+          console.log(error)
+        }
+
+      }
+
+    fetchStats()
+
+  }, [])
 
   /* LIVE SOCKET DATA */
   useEffect(() => {
-    socket.on('live-data', (liveData) => {
-      setStats((prev) => ({
-        ...prev,
-        temperature: liveData.temperature,
-        energyUsage: liveData.energy,
-      }));
-    });
+
+    socket.on(
+      'live-data',
+      (liveData) => {
+
+        setStats((prev) => ({
+          ...prev,
+          temperature:
+            liveData.temperature,
+          energyUsage:
+            liveData.energy,
+        }))
+
+      }
+    )
 
     return () => {
-      socket.off('live-data');
-    };
-  }, []);
+      socket.off('live-data')
+    }
+
+  }, [])
+
+  /* ADD WIDGET */
+  const addWidget = (type) => {
+
+    const newWidget = {
+      type,
+      title:
+        type === 'line-chart'
+          ? 'New Line Chart'
+          : 'New Bar Chart',
+    }
+
+    setWidgets([
+      ...widgets,
+      newWidget,
+    ])
+
+  }
+
+  /* REMOVE WIDGET */
+  const removeWidget = (
+    index
+  ) => {
+
+    const updated =
+      widgets.filter(
+        (_, i) => i !== index
+      )
+
+    setWidgets(updated)
+
+  }
+
+  /* SAVE DASHBOARD */
+  const saveDashboard =
+    async () => {
+
+      try {
+
+        await API.post(
+          '/dashboards',
+          {
+            title:
+              'Main Dashboard',
+            widgets,
+          }
+        )
+
+        alert(
+          'Dashboard Saved'
+        )
+
+      } catch (error) {
+
+        console.log(error)
+
+      }
+
+    }
 
   return (
     <DashboardLayout>
+
       {/* HEADER */}
-      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+
         <div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
-            Welcome back, {user?.name || "Operator"} 👋
+
+          <h1 className="text-4xl font-bold text-white mb-2">
+            IoT Monitoring Dashboard
           </h1>
-          <p className="text-slate-400 text-sm mt-1">
-            Real-time analytics and telemetry feed
+
+          <p className="text-gray-400">
+            Real-time analytics and monitoring
           </p>
+
         </div>
 
-        {/* Date Display */}
-        <div className="text-slate-400 text-xs font-semibold px-4 py-2 bg-brand-card/30 border border-brand-border rounded-xl self-start md:self-auto">
-          System Time: <span className="text-emerald-400">{new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+        {/* ACTIONS */}
+        <div className="flex gap-4 flex-wrap">
+
+          <button
+            onClick={() =>
+              addWidget(
+                'line-chart'
+              )
+            }
+            className="bg-green-500 hover:bg-green-600 px-5 py-3 rounded-lg text-white font-semibold"
+          >
+            Add Line Chart
+          </button>
+
+          <button
+            onClick={() =>
+              addWidget(
+                'bar-chart'
+              )
+            }
+            className="bg-blue-500 hover:bg-blue-600 px-5 py-3 rounded-lg text-white font-semibold"
+          >
+            Add Bar Chart
+          </button>
+
+          <button
+            onClick={saveDashboard}
+            className="bg-yellow-500 hover:bg-yellow-600 px-5 py-3 rounded-lg text-white font-semibold"
+          >
+            Save Dashboard
+          </button>
+
         </div>
+
       </div>
 
       {/* STATS */}
@@ -68,7 +198,9 @@ const Dashboard = () => {
 
         <StatsCard
           title="Active Devices"
-          value={stats.activeDevices}
+          value={
+            stats.activeDevices
+          }
           color="#22C55E"
         />
 
@@ -92,12 +224,43 @@ const Dashboard = () => {
 
       </div>
 
-      {/* CHARTS */}
+      {/* WIDGETS */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-        <LineChartWidget />
+        {widgets.map(
+          (widget, index) => (
 
-        <BarChartWidget />
+            <div
+              key={index}
+              className="relative"
+            >
+
+              {/* REMOVE BUTTON */}
+              <button
+                onClick={() =>
+                  removeWidget(
+                    index
+                  )
+                }
+                className="absolute top-4 right-4 z-10 bg-red-500 hover:bg-red-600 w-8 h-8 rounded-full text-white"
+              >
+                ×
+              </button>
+
+              {widget.type ===
+                'line-chart' && (
+                <LineChartWidget />
+              )}
+
+              {widget.type ===
+                'bar-chart' && (
+                <BarChartWidget />
+              )}
+
+            </div>
+
+          )
+        )}
 
       </div>
 
