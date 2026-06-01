@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
+dotenv.config()
 const http = require('http')
 
 const { Server } =
@@ -12,7 +13,6 @@ const connectDB =
 const connectMQTT =
   require('./services/mqttService')
 
-dotenv.config()
 
 connectDB()
 

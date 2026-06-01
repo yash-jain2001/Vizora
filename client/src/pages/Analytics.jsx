@@ -18,8 +18,13 @@ const Analytics = () => {
   const [range, setRange] =
     useState('-1h')
 
+  const [loading, setLoading] =
+    useState(true)
+
   const fetchData =
     async () => {
+
+      setLoading(true)
 
       try {
 
@@ -45,6 +50,10 @@ const Analytics = () => {
       } catch (error) {
 
         console.log(error)
+
+      } finally {
+
+        setLoading(false)
 
       }
 
@@ -105,6 +114,7 @@ const Analytics = () => {
 
       <HistoricalTemperatureChart
         data={data}
+        loading={loading}
       />
 
     </DashboardLayout>
