@@ -1,39 +1,35 @@
+const axios = require('axios')
 const Datasource = require('../models/Datasource')
+const { getValueByPath } = require('../services/httpPollingService')
 
 const createDatasource = async (req, res) => {
-
   try {
-
     const datasource = await Datasource.create(req.body)
 
+    // Start background polling if it's an HTTP/REST datasource
+    if (datasource.type === 'http' || datasource.type === 'rest') {
+      const io = req.app.get('io')
+      const { startPolling } = require('../services/httpPollingService')
+      startPolling(datasource, io)
+    }
+
     res.status(201).json(datasource)
-
   } catch (error) {
-
     res.status(500).json({
       message: error.message,
     })
-
   }
-
 }
 
 const getDatasources = async (req, res) => {
-
   try {
-
     const datasources = await Datasource.find()
-
     res.json(datasources)
-
   } catch (error) {
-
     res.status(500).json({
       message: error.message,
     })
-
   }
-
 }
 
 const testDatasource = async (req, res) => {
@@ -47,6 +43,62 @@ const testDatasource = async (req, res) => {
       })
     }
 
+    // HTTP / REST Connection Test
+    if (type.toLowerCase() === 'http' || type.toLowerCase() === 'rest') {
+      const { method, headers: headersInput, valuePath, body: bodyInput } = config || {}
+
+      const parsedHeaders = {}
+      if (headersInput) {
+        if (Array.isArray(headersInput)) {
+          headersInput.forEach((h) => {
+            if (h.key && h.value) {
+              parsedHeaders[h.key] = h.value
+            }
+          })
+        } else {
+          Object.assign(parsedHeaders, headersInput)
+        }
+      }
+
+      const reqMethod = (method || 'GET').toUpperCase()
+      const reqConfig = {
+        headers: parsedHeaders,
+        timeout: 5000,
+      }
+
+      let response
+      try {
+        if (reqMethod === 'POST') {
+          const reqBody = bodyInput ? (typeof bodyInput === 'string' ? JSON.parse(bodyInput) : bodyInput) : null
+          response = await axios.post(url, reqBody, reqConfig)
+        } else {
+          response = await axios.get(url, reqConfig)
+        }
+
+        const data = response.data
+        const extractedValue = getValueByPath(data, valuePath || 'value')
+        const numericValue = Number(extractedValue)
+
+        if (isNaN(numericValue)) {
+          return res.status(200).json({
+            success: true,
+            message: `Connected successfully (Status ${response.status}). Warning: Extracted value at path "${valuePath || 'value'}" is not a number (Value: ${JSON.stringify(extractedValue)}).`,
+          })
+        }
+
+        return res.status(200).json({
+          success: true,
+          message: `Connected successfully (Status ${response.status}). Extracted Value: ${numericValue}`,
+        })
+      } catch (err) {
+        return res.status(400).json({
+          success: false,
+          message: `Failed to connect to ${url}: ${err.message}`,
+        })
+      }
+    }
+
+    // InfluxDB Connection Test
     if (type.toLowerCase() === 'influxdb') {
       const { product, token } = config || {}
 
@@ -83,7 +135,6 @@ const testDatasource = async (req, res) => {
       success: true,
       message: `Connection test completed for ${type}.`,
     })
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -101,6 +152,13 @@ const deleteDatasource = async (req, res) => {
         message: 'Datasource not found',
       })
     }
+
+    // Stop background polling if it is an HTTP/REST datasource
+    if (datasource.type === 'http' || datasource.type === 'rest') {
+      const { stopPolling } = require('../services/httpPollingService')
+      stopPolling(id)
+    }
+
     res.json({
       message: 'Datasource deleted successfully',
     })

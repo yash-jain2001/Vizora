@@ -29,6 +29,11 @@ const Datasources = () => {
     httpMethod: "GET",
     csvHeader: true,
     csvDelimiter: ",",
+    valuePath: "value",
+    headers: "{}",
+    body: "{}",
+    measurement: "temperature",
+    field: "value",
   });
 
   const [advancedSettings, setAdvancedSettings] = useState({
@@ -145,10 +150,15 @@ const Datasources = () => {
       password: "",
       topic: "",
       clientId: "",
-      scrapeInterval: "15s",
+      scrapeInterval: "10s",
       httpMethod: "GET",
       csvHeader: true,
       csvDelimiter: ",",
+      valuePath: "value",
+      headers: "{}",
+      body: "{}",
+      measurement: "temperature",
+      field: "value",
     });
 
     setView("connector-config");
@@ -182,6 +192,19 @@ const Datasources = () => {
         csvHeader: formData.csvHeader,
         csvDelimiter: formData.csvDelimiter,
         advanced: advancedSettings,
+        
+        // REST HTTP specific configuration values
+        method: formData.httpMethod,
+        interval: Number(formData.scrapeInterval.replace('s', '')) || 10,
+        valuePath: formData.valuePath,
+        headers: (() => {
+          try { return JSON.parse(formData.headers || '{}') } catch(e) { return {} }
+        })(),
+        body: (() => {
+          try { return JSON.parse(formData.body || '{}') } catch(e) { return null }
+        })(),
+        measurement: formData.measurement,
+        field: formData.field,
       },
     };
 
@@ -191,7 +214,7 @@ const Datasources = () => {
       if (testRes.data.success) {
         setTestResult({ success: true, message: testRes.data.message });
 
-        // Save connection
+        // Save connection to MongoDB database
         const saveRes = await API.post("/datasources", payload);
         setDatasources((prev) => [...prev, saveRes.data]);
 
@@ -339,7 +362,6 @@ const Datasources = () => {
     return false;
   };
 
-  // Helpers for step labels and titles
   const getStep2Name = () => {
     switch (formData.type) {
       case "influxdb":
@@ -618,16 +640,92 @@ const Datasources = () => {
                 ))}
               </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  Polling Interval <span className="text-red-500">*</span>
+                </label>
+                <span className="text-[11px] text-slate-500 font-semibold">Frequency of polling (e.g. 10s, 30s)</span>
+                <input
+                  type="text"
+                  name="scrapeInterval"
+                  value={formData.scrapeInterval}
+                  onChange={handleChange}
+                  placeholder="e.g. 10s"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  JSON Value Path <span className="text-red-500">*</span>
+                </label>
+                <span className="text-[11px] text-slate-500 font-semibold">Dot-separated path to metric (e.g. main.temp)</span>
+                <input
+                  type="text"
+                  name="valuePath"
+                  value={formData.valuePath}
+                  onChange={handleChange}
+                  placeholder="e.g. value"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+            </div>
+
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-extrabold text-slate-300">Scrape Interval</label>
-              <input
-                type="text"
-                name="scrapeInterval"
-                value={formData.scrapeInterval}
+              <label className="text-xs font-extrabold text-slate-300">Request Headers (JSON format)</label>
+              <span className="text-[11px] text-slate-500 font-semibold">Custom request headers passed to the API call</span>
+              <textarea
+                name="headers"
+                value={formData.headers}
                 onChange={handleChange}
-                placeholder="e.g. 30s"
-                className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                placeholder='e.g. {"Authorization": "Bearer token", "Content-Type": "application/json"}'
+                rows="3"
+                className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold font-mono outline-hidden w-full resize-none"
               />
+            </div>
+
+            {formData.httpMethod === "POST" && (
+              <div className="flex flex-col gap-1.5 animate-slide-down">
+                <label className="text-xs font-extrabold text-slate-300">Request Body (JSON format)</label>
+                <textarea
+                  name="body"
+                  value={formData.body}
+                  onChange={handleChange}
+                  placeholder='e.g. {"deviceId": "sensor_01", "status": "active"}'
+                  rows="3"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold font-mono outline-hidden w-full resize-none"
+                />
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-white/5 pt-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Target Measurement</label>
+                <span className="text-[11px] text-slate-500 font-semibold">InfluxDB measurement table (default: temperature)</span>
+                <input
+                  type="text"
+                  name="measurement"
+                  value={formData.measurement}
+                  onChange={handleChange}
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Target Field</label>
+                <span className="text-[11px] text-slate-500 font-semibold">InfluxDB metric field name (default: value)</span>
+                <input
+                  type="text"
+                  name="field"
+                  value={formData.field}
+                  onChange={handleChange}
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
             </div>
           </div>
         );
@@ -824,6 +922,27 @@ const Datasources = () => {
                           <code className="bg-slate-950/40 px-3.5 py-2 rounded-xl border border-white/5 text-slate-300 font-mono text-xs overflow-x-auto select-all">
                             {source.topic}
                           </code>
+                        </div>
+                      )}
+
+                      {source.type === "rest" && source.config?.valuePath && (
+                        <div className="grid grid-cols-2 gap-4 mt-1">
+                          <div className="flex flex-col gap-1">
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                              JSON Value Path
+                            </span>
+                            <code className="text-xs font-mono font-semibold text-slate-300 px-1">
+                              {source.config.valuePath}
+                            </code>
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                              Influx Measurement
+                            </span>
+                            <span className="text-xs font-semibold text-emerald-400 px-1">
+                              {source.config.measurement || "temperature"}
+                            </span>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -1489,6 +1608,14 @@ const Datasources = () => {
                                 <span className="text-slate-500 block mb-0.5">Query Interval</span>
                                 <span className="text-white font-semibold">{formData.scrapeInterval}</span>
                               </div>
+                              <div>
+                                <span className="text-slate-500 block mb-0.5">JSON Value Path</span>
+                                <code className="text-white font-mono font-semibold">{formData.valuePath}</code>
+                              </div>
+                              <div>
+                                <span className="text-slate-500 block mb-0.5">Measurement</span>
+                                <span className="text-emerald-400 font-semibold">{formData.measurement}</span>
+                              </div>
                             </>
                           )}
                           {formData.type === "csv" && (
@@ -1556,7 +1683,7 @@ const Datasources = () => {
                     if (configStep > 1) {
                       setConfigStep(configStep - 1);
                     } else {
-                      setView("select-connector");
+                      setView("list");
                     }
                   }}
                   className="px-5 py-3 rounded-xl border border-white/5 hover:border-white/10 text-slate-300 hover:text-white text-xs font-bold transition-all bg-slate-900/40 hover:bg-slate-900/60 cursor-pointer shadow-sm active:translate-y-0.5 outline-hidden"

@@ -13,6 +13,8 @@ const connectDB =
 const connectMQTT =
   require('./services/mqttService')
 
+const { initPolling } =
+  require('./services/httpPollingService')
 
 connectDB()
 
@@ -29,7 +31,14 @@ const io = new Server(server, {
   },
 })
 
+// Share socket.io instance with Express controllers
+app.set('io', io)
+
+// Initialize MQTT subscription
 connectMQTT(io)
+
+// Initialize HTTP background polling
+initPolling(io)
 
 app.use(cors())
 app.use(express.json())

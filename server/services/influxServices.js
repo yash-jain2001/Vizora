@@ -39,6 +39,39 @@ const saveTemperature =
 
   }
 
+const saveMetric =
+  async (
+    measurement,
+    field,
+    value
+  ) => {
+
+    try {
+
+      const point =
+        new Point(
+          measurement
+        )
+          .floatField(
+            field,
+            Number(value)
+          )
+
+      writeApi.writePoint(
+        point
+      )
+
+      await writeApi.flush()
+
+    } catch (error) {
+
+      console.log(error)
+
+    }
+
+  }
+
 module.exports = {
   saveTemperature,
+  saveMetric,
 }
