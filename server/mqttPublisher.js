@@ -8,7 +8,7 @@ client.on("connect", () => {
   setInterval(() => {
     const randomTemp = Math.floor(Math.random() * 100);
 
-    client.publish("vizora/temperature", randomTemp.toString());
+    client.publish("minigrafana/temperature", randomTemp.toString());
 
     console.log(`Published: ${randomTemp}`);
   }, 3000);

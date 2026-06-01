@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
+dotenv.config()
 
 const http = require('http')
 
@@ -9,8 +10,6 @@ const { Server } = require('socket.io')
 const connectDB = require('./config/db')
 
 const connectMQTT = require('./services/mqttService')
-
-dotenv.config()
 
 connectDB()
 
@@ -76,3 +75,10 @@ const PORT = process.env.PORT || 5000
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+app.use(
+  '/api/history',
+  require(
+    './routes/historyRoutes'
+  )
+)

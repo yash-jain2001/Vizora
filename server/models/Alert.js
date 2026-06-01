@@ -27,9 +27,18 @@ const alertSchema = new mongoose.Schema(
       required: true,
     },
 
+    acknowledged: {
+      type: Boolean,
+      default: false,
+    },
+
     resolved: {
       type: Boolean,
       default: false,
+    },
+
+    resolvedAt: {
+      type: Date,
     },
   },
   {

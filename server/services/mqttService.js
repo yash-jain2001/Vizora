@@ -2,6 +2,10 @@ const mqtt = require('mqtt')
 
 const Alert = require('../models/Alert')
 
+const {
+  saveTemperature,
+} = require('./influxServices')
+
 const connectMQTT = (io) => {
 
   const client = mqtt.connect(
@@ -12,8 +16,39 @@ const connectMQTT = (io) => {
 
     console.log('MQTT Connected')
 
+    console.log(
+      'Subscribing to: minigrafana/temperature'
+    )
+
     client.subscribe(
-      'vizora/temperature'
+      'minigrafana/temperature',
+      (err) => {
+
+        if (err) {
+
+          console.error(
+            'Subscribe Error:',
+            err
+          )
+
+        } else {
+
+          console.log(
+            'Successfully subscribed to minigrafana/temperature'
+          )
+
+        }
+
+      }
+    )
+
+  })
+
+  client.on('error', (error) => {
+
+    console.error(
+      'MQTT Connection Error:',
+      error
     )
 
   })
@@ -25,50 +60,75 @@ const connectMQTT = (io) => {
       message
     ) => {
 
-      const value =
-        Number(
+      console.log(
+        'MESSAGE RECEIVED:',
+        topic,
+        message.toString()
+      )
+
+      try {
+
+        const value = Number(
           message.toString()
         )
 
-      console.log(
-        `MQTT Message: ${value}`
-      )
+        console.log(
+          `MQTT Message: ${value}`
+        )
 
-      const liveData = {
-        temperature: value,
-        energy:
-          Math.floor(
-            Math.random() * 100
-          ),
-        time:
-          new Date().toLocaleTimeString(),
-      }
+        /* SAVE TO INFLUXDB */
+        await saveTemperature(
+          value
+        )
 
-      /* EMIT LIVE DATA */
-      io.emit(
-        'live-data',
-        liveData
-      )
+        console.log(
+          `Saved to InfluxDB: ${value}`
+        )
 
-      /* ALERT CONDITION */
-      if (value > 70) {
+        const liveData = {
+          temperature: value,
+          energy:
+            Math.floor(
+              Math.random() * 100
+            ),
+          time:
+            new Date().toLocaleTimeString(),
+        }
 
-        const alert =
-          await Alert.create({
-            title:
-              'High Temperature',
-            message:
-              `Temperature exceeded threshold: ${value}°C`,
-            severity:
-              value > 90
-                ? 'high'
-                : 'medium',
-            value,
-          })
-
+        /* REALTIME DASHBOARD UPDATE */
         io.emit(
-          'new-alert',
-          alert
+          'live-data',
+          liveData
+        )
+
+        /* ALERT GENERATION */
+        if (value > 70) {
+
+          const alert =
+            await Alert.create({
+              title:
+                'High Temperature',
+              message:
+                `Temperature exceeded threshold: ${value}°C`,
+              severity:
+                value > 90
+                  ? 'high'
+                  : 'medium',
+              value,
+            })
+
+          io.emit(
+            'new-alert',
+            alert
+          )
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          'MQTT Processing Error:',
+          error
         )
 
       }

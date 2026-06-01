@@ -23,6 +23,11 @@ const datasourceSchema = new mongoose.Schema(
       default: '',
     },
 
+    config: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
