@@ -10,6 +10,7 @@ import Register from "../pages/Register";
 import Dashboard from "../pages/Dashboard";
 import Datasources from "../pages/Datasources";
 import Alerts from "../pages/Alert";
+import Analytics from "../pages/Analytics";
 import Admin from "../pages/Admin";
 
 import ProtectedRoute from "./ProtectedRoute";
@@ -60,11 +61,20 @@ const AppRoutes = () => {
         />
 
         <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute>
+              <Analytics />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/admin"
           element={
             <RoleRoute
               allowedRoles={[
-                "admin",
+                'admin',
               ]}
             >
               <Admin />
