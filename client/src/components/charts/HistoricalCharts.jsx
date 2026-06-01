@@ -6,6 +6,7 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
+  ReferenceLine,
 } from 'recharts'
 
 const HistoricalTemperatureChart = ({
@@ -54,6 +55,24 @@ const HistoricalTemperatureChart = ({
     )
   }
 
+  // Calculate statistics
+  const values = data.map((item) => item.value)
+  const totalSamples = data.length
+  const avgTemp = totalSamples > 0 ? Math.round(values.reduce((sum, val) => sum + val, 0) / totalSamples) : 0
+  const maxTemp = totalSamples > 0 ? Math.max(...values) : 0
+  const minTemp = totalSamples > 0 ? Math.min(...values) : 0
+  const lastReading = totalSamples > 0 ? values[totalSamples - 1] : 0
+
+  let statusText = 'Normal'
+  let statusColor = 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+  if (lastReading > 90) {
+    statusText = 'Critical'
+    statusColor = 'text-red-400 bg-red-500/10 border-red-500/20'
+  } else if (lastReading > 70) {
+    statusText = 'Warning'
+    statusColor = 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+  }
+
   return (
     <div className="bg-brand-card/45 backdrop-blur-xl border border-white/5 p-6 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
       <h2 className="text-white text-xl font-bold mb-6">
@@ -78,6 +97,16 @@ const HistoricalTemperatureChart = ({
               tick={{ fill: "#9ca3af", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
+              minTickGap={60}
+              tickFormatter={(time) => {
+                if (typeof time === 'string' && time.includes(':')) {
+                  const parts = time.split(':')
+                  if (parts.length >= 2) {
+                    return `${parts[0]}:${parts[1]}`
+                  }
+                }
+                return time
+              }}
             />
 
             <YAxis
@@ -100,6 +129,34 @@ const HistoricalTemperatureChart = ({
               labelStyle={{ color: '#9ca3af', fontWeight: 'bold' }}
             />
 
+            <ReferenceLine
+              y={70}
+              stroke="#f59e0b"
+              strokeDasharray="3 3"
+              strokeWidth={1.5}
+              label={{
+                value: 'Warning (70°C)',
+                fill: '#f59e0b',
+                fontSize: 10,
+                position: 'top',
+                fontWeight: 'bold',
+              }}
+            />
+
+            <ReferenceLine
+              y={90}
+              stroke="#ef4444"
+              strokeDasharray="3 3"
+              strokeWidth={1.5}
+              label={{
+                value: 'Critical (90°C)',
+                fill: '#ef4444',
+                fontSize: 10,
+                position: 'top',
+                fontWeight: 'bold',
+              }}
+            />
+
             <Area
               type="monotone"
               dataKey="value"
@@ -110,6 +167,34 @@ const HistoricalTemperatureChart = ({
             />
           </AreaChart>
         </ResponsiveContainer>
+      </div>
+
+      {/* STATISTICS SUMMARY SUMMARY */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-6 mt-6 pt-6 border-t border-white/5 text-sm select-none">
+        <div className="flex flex-col gap-1">
+          <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Samples</span>
+          <span className="text-white font-extrabold text-base">{totalSamples}</span>
+        </div>
+        <div className="flex flex-col gap-1">
+          <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Average</span>
+          <span className="text-emerald-400 font-extrabold text-base">{avgTemp}°C</span>
+        </div>
+        <div className="flex flex-col gap-1">
+          <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Peak</span>
+          <span className="text-red-400 font-extrabold text-base">{maxTemp}°C</span>
+        </div>
+        <div className="flex flex-col gap-1">
+          <span className="text-slate-500 font-bold text-xs uppercase tracking-wider">Last Reading</span>
+          <span className="text-amber-400 font-extrabold text-base">{lastReading}°C</span>
+        </div>
+        <div className="flex flex-col gap-1 col-span-2 sm:col-span-1">
+          <span className="text-slate-500 font-bold text-xs uppercase tracking-wider mb-0.5">Status</span>
+          <div>
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold border ${statusColor}`}>
+              {statusText}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   )
