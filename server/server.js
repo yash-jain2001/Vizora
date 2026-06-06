@@ -10,7 +10,7 @@ const { Server } =
 const connectDB =
   require('./config/db')
 
-const connectMQTT =
+const { initMqttSubscriptions } =
   require('./services/mqttService')
 
 const { initPolling } =
@@ -35,7 +35,7 @@ const io = new Server(server, {
 app.set('io', io)
 
 // Initialize MQTT subscription
-connectMQTT(io)
+initMqttSubscriptions(io)
 
 // Initialize HTTP background polling
 initPolling(io)
@@ -71,6 +71,11 @@ app.use(
 app.use(
   '/api/history',
   require('./routes/historyRoutes')
+)
+
+app.use(
+  '/api/admin',
+  require('./routes/adminRoutes')
 )
 
 io.on(

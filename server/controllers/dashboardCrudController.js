@@ -11,6 +11,15 @@ const createDashboard = async (
     const dashboard =
       await Dashboard.create(req.body)
 
+    const logAudit = require('../utils/auditLogger')
+    const creatorName = req.user ? req.user.name : 'System'
+    await logAudit(
+      'INFO',
+      `Dashboard created: ${dashboard.title}`,
+      creatorName,
+      req.ip
+    )
+
     res.status(201).json(
       dashboard
     )
@@ -80,8 +89,42 @@ const getDashboardById =
 
   }
 
+/* UPDATE DASHBOARD */
+const updateDashboard = async (req, res) => {
+  try {
+    const { title, widgets } = req.body;
+    const dashboard = await Dashboard.findByIdAndUpdate(
+      req.params.id,
+      { title, widgets },
+      { new: true, runValidators: true }
+    );
+
+    if (!dashboard) {
+      return res.status(404).json({
+        message: 'Dashboard not found',
+      });
+    }
+
+    const logAudit = require('../utils/auditLogger')
+    const updaterName = req.user ? req.user.name : 'System'
+    await logAudit(
+      'CONFIG',
+      `Dashboard updated: ${dashboard.title}`,
+      updaterName,
+      req.ip
+    )
+
+    res.json(dashboard);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+}
+
 module.exports = {
   createDashboard,
   getDashboards,
   getDashboardById,
+  updateDashboard,
 }

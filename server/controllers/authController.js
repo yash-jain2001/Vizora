@@ -16,6 +16,16 @@ const registerUser = async (req, res) => {
       role,
     } = req.body
 
+    const Setting = require('../models/Setting')
+    const logAudit = require('../utils/auditLogger')
+
+    const registrationSetting = await Setting.findOne({ key: 'registrationEnabled' })
+    if (registrationSetting && registrationSetting.value === false) {
+      return res.status(403).json({
+        message: 'Public registration is disabled by the administrator',
+      })
+    }
+
     const userExists = await User.findOne({ email })
 
     if (userExists) {
@@ -39,6 +49,13 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
       role,
     })
+
+    await logAudit(
+      'INFO',
+      `New user registered: ${user.email} (${user.role})`,
+      user.name,
+      req.ip
+    )
 
     res.status(201).json({
       _id: user._id,
@@ -70,6 +87,8 @@ const loginUser = async (req, res) => {
 
     const user = await User.findOne({ email })
 
+    const logAudit = require('../utils/auditLogger')
+
     if (
       user &&
       (await bcrypt.compare(
@@ -77,6 +96,13 @@ const loginUser = async (req, res) => {
         user.password
       ))
     ) {
+
+      await logAudit(
+        'INFO',
+        `User logged in: ${user.email}`,
+        user.name,
+        req.ip
+      )
 
       res.json({
         _id: user._id,
@@ -90,6 +116,13 @@ const loginUser = async (req, res) => {
       })
 
     } else {
+
+      await logAudit(
+        'WARN',
+        `Failed login attempt: ${email}`,
+        'System',
+        req.ip
+      )
 
       res.status(401).json({
         message: 'Invalid credentials',

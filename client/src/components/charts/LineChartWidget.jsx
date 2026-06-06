@@ -46,7 +46,7 @@ const LineChartWidget = () => {
   return (
     <WidgetContainer title='Live Temperature Feed'>
 
-      <ResponsiveContainer width='100%' height={300}>
+      <ResponsiveContainer width='100%' height="100%">
 
         <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
           <defs>

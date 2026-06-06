@@ -15,7 +15,7 @@ const WidgetContainer = ({ title, children }) => {
         </button>
       </div>
 
-      <div className="w-full flex-1">
+      <div className="w-full flex-1 min-h-0 h-full">
         {children}
       </div>
     </div>

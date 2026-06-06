@@ -13,6 +13,7 @@ import WidgetContainer from '../widgets/WidgetContainer'
 import { useEffect, useState } from 'react'
 
 import API from '../../api/axios'
+import socket from '../../hooks/useSocket'
 
 const BarChartWidget = () => {
 
@@ -36,7 +37,7 @@ const BarChartWidget = () => {
   return (
     <WidgetContainer title='Weekly Usage'>
 
-      <ResponsiveContainer width='100%' height={300}>
+      <ResponsiveContainer width='100%' height="100%">
 
         <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
           <defs>

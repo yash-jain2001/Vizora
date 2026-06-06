@@ -6,12 +6,25 @@ const createDatasource = async (req, res) => {
   try {
     const datasource = await Datasource.create(req.body)
 
-    // Start background polling if it's an HTTP/REST datasource
+    // Start background polling / subscriptions based on type
     if (datasource.type === 'http' || datasource.type === 'rest') {
       const io = req.app.get('io')
       const { startPolling } = require('../services/httpPollingService')
       startPolling(datasource, io)
+    } else if (datasource.type === 'mqtt') {
+      const io = req.app.get('io')
+      const { startMqttSubscription } = require('../services/mqttService')
+      startMqttSubscription(datasource, io)
     }
+
+    const logAudit = require('../utils/auditLogger')
+    const creatorName = req.user ? req.user.name : 'System'
+    await logAudit(
+      'INFO',
+      `Datasource created: ${datasource.name} (${datasource.type})`,
+      creatorName,
+      req.ip
+    )
 
     res.status(201).json(datasource)
   } catch (error) {
@@ -36,6 +49,15 @@ const testDatasource = async (req, res) => {
   const { type, url, config } = req.body
 
   try {
+    const logAudit = require('../utils/auditLogger')
+    const testerName = req.user ? req.user.name : 'System'
+    await logAudit(
+      'INFO',
+      `Datasource connection tested: ${type} (${url})`,
+      testerName,
+      req.ip
+    )
+
     if (!type || !url) {
       return res.status(400).json({
         success: false,
@@ -153,11 +175,23 @@ const deleteDatasource = async (req, res) => {
       })
     }
 
-    // Stop background polling if it is an HTTP/REST datasource
+    // Stop background polling / MQTT subscriptions
     if (datasource.type === 'http' || datasource.type === 'rest') {
       const { stopPolling } = require('../services/httpPollingService')
       stopPolling(id)
+    } else if (datasource.type === 'mqtt') {
+      const { stopMqttSubscription } = require('../services/mqttService')
+      stopMqttSubscription(id)
     }
+
+    const logAudit = require('../utils/auditLogger')
+    const deleterName = req.user ? req.user.name : 'System'
+    await logAudit(
+      'WARN',
+      `Datasource deleted: ${datasource.name}`,
+      deleterName,
+      req.ip
+    )
 
     res.json({
       message: 'Datasource deleted successfully',

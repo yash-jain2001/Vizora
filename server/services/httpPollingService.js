@@ -80,18 +80,29 @@ const startPolling = (datasource, io) => {
 
       console.log(`[HTTP Polling] "${name}" fetched value: ${numericValue} (from path "${valuePath}")`)
 
-      // Write to InfluxDB
-      await saveMetric(measurement, field, numericValue)
-
-      // Emit to socket clients if it's temperature telemetry
-      if (io && measurement === 'temperature') {
-        const liveData = {
-          temperature: numericValue,
-          energy: Math.floor(Math.random() * 100),
+      // Emit dynamic socket feed for this specific datasource immediately
+      if (io) {
+        io.emit(`live-data-${idStr}`, {
+          datasourceId: idStr,
+          value: numericValue,
           time: new Date().toLocaleTimeString(),
+        })
+
+        // Maintain compatibility with standard live-data stream
+        if (measurement === 'temperature') {
+          const liveData = {
+            temperature: numericValue,
+            energy: Math.floor(Math.random() * 100),
+            time: new Date().toLocaleTimeString(),
+          }
+          io.emit('live-data', liveData)
         }
-        io.emit('live-data', liveData)
       }
+
+      // Write to InfluxDB asynchronously in the background
+      saveMetric(measurement, field, numericValue).catch(err => {
+        console.error(`[HTTP Polling] InfluxDB save failed for "${name}":`, err.message)
+      })
 
     } catch (error) {
       console.error(`[HTTP Polling] "${name}" error:`, error.message)

@@ -7,7 +7,11 @@ const {
   deleteDatasource,
 } = require('../controllers/datasourceController')
 
+const protect = require('../middlewares/authMiddleware')
+
 const router = express.Router()
+
+router.use(protect)
 
 router.post('/', createDatasource)
 

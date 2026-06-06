@@ -49,6 +49,15 @@ const acknowledgeAlert =
 
       await alert.save()
 
+      const logAudit = require('../utils/auditLogger')
+      const ackName = req.user ? req.user.name : 'System'
+      await logAudit(
+        'CONFIG',
+        `Alert acknowledged: ${alert.title}`,
+        ackName,
+        req.ip
+      )
+
       res.json(alert)
 
     } catch (error) {
@@ -87,6 +96,15 @@ const resolveAlert =
         new Date()
 
       await alert.save()
+
+      const logAudit = require('../utils/auditLogger')
+      const resName = req.user ? req.user.name : 'System'
+      await logAudit(
+        'CONFIG',
+        `Alert resolved: ${alert.title}`,
+        resName,
+        req.ip
+      )
 
       res.json(alert)
 
