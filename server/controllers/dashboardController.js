@@ -251,7 +251,7 @@ const getStepLineChartData = async (req, res) => {
     { name: 'Page E', uv: 1890, pv: 4800, amt: 2181 },
   ]);
 };
-\nmodule.exports = {
+module.exports = {
   getDashboardStats,
   getLineChartData,
   getBarChartData,
@@ -271,6 +271,3 @@ const getStepLineChartData = async (req, res) => {
   getBiaxialBarChartData,
   getStepLineChartData,
 };
-  getDashboardStats,
-  getLineChartData,
-  

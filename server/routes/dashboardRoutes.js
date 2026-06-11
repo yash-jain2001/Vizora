@@ -4,17 +4,28 @@ const {
   getDashboardStats,
   getLineChartData,
   getBarChartData,
+  getAreaChartData,
+  getStackedAreaChartData,
+  getPieChartData,
+  getDonutChartData,
+  getScatterChartData,
+  getBubbleChartData,
+  getRadarChartData,
+  getRadialBarChartData,
+  getComposedChartData,
+  getTreemapData,
+  getFunnelChartData,
+  getStackedBarChartData,
+  getBiaxialLineChartData,
+  getBiaxialBarChartData,
+  getStepLineChartData,
 } = require('../controllers/dashboardController')
 
 const router = express.Router()
 
 router.get('/stats', getDashboardStats)
-
 router.get('/line-chart', getLineChartData)
-
 router.get('/bar-chart', getBarChartData)
-
-
 router.get('/area-chart', getAreaChartData)
 router.get('/stacked-area-chart', getStackedAreaChartData)
 router.get('/pie-chart', getPieChartData)
