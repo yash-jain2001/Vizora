@@ -33,7 +33,8 @@ const saveTemperature =
 
     } catch (error) {
 
-      console.log(error)
+      const msg = error.errors ? error.errors[0].code : error.message;
+      console.log('InfluxDB write failed:', msg)
 
     }
 
@@ -65,7 +66,8 @@ const saveMetric =
 
     } catch (error) {
 
-      console.log(error)
+      const msg = error.errors ? error.errors[0].code : error.message;
+      console.log('InfluxDB write failed:', msg)
 
     }
 

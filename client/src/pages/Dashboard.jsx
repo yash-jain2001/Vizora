@@ -1,21 +1,107 @@
 import DashboardLayout from "../components/layout/DashboardLayout";
 import LineChartWidget from "../components/charts/LineChartWidget";
-import BarChartWidget from "../components/charts/BarChartWidget";
+import SplineChartWidget from "../components/charts/SplineChartWidget";
+import StepLineChartWidget from "../components/charts/StepLineChartWidget";
 import AreaChartWidget from "../components/charts/AreaChartWidget";
 import StackedAreaChartWidget from "../components/charts/StackedAreaChartWidget";
+import StreamGraphWidget from "../components/charts/StreamGraphWidget";
+import BarChartWidget from "../components/charts/BarChartWidget";
+import StackedBarChartWidget from "../components/charts/StackedBarChartWidget";
+import HorizontalBarChartWidget from "../components/charts/HorizontalBarChartWidget";
+import GroupedBarChartWidget from "../components/charts/GroupedBarChartWidget";
+import BiaxialBarChartWidget from "../components/charts/BiaxialBarChartWidget";
+import BiaxialLineChartWidget from "../components/charts/BiaxialLineChartWidget";
+import ComposedChartWidget from "../components/charts/ComposedChartWidget";
 import PieChartWidget from "../components/charts/PieChartWidget";
 import DonutChartWidget from "../components/charts/DonutChartWidget";
+import RadialBarChartWidget from "../components/charts/RadialBarChartWidget";
+import GaugeChartWidget from "../components/charts/GaugeChartWidget";
+import LinearGaugeWidget from "../components/charts/LinearGaugeWidget";
+import ProgressBarWidget from "../components/charts/ProgressBarWidget";
+import BulletChartWidget from "../components/charts/BulletChartWidget";
+import KpiCardWidget from "../components/charts/KpiCardWidget";
+import SparklineWidget from "../components/charts/SparklineWidget";
 import ScatterChartWidget from "../components/charts/ScatterChartWidget";
 import BubbleChartWidget from "../components/charts/BubbleChartWidget";
+import HistogramWidget from "../components/charts/HistogramWidget";
+import BoxPlotWidget from "../components/charts/BoxPlotWidget";
+import ViolinPlotWidget from "../components/charts/ViolinPlotWidget";
+import DensityPlotWidget from "../components/charts/DensityPlotWidget";
+import ParetoChartWidget from "../components/charts/ParetoChartWidget";
 import RadarChartWidget from "../components/charts/RadarChartWidget";
-import RadialBarChartWidget from "../components/charts/RadialBarChartWidget";
-import ComposedChartWidget from "../components/charts/ComposedChartWidget";
+import HeatmapWidget from "../components/charts/HeatmapWidget";
+import CalendarHeatmapWidget from "../components/charts/CalendarHeatmapWidget";
 import TreemapWidget from "../components/charts/TreemapWidget";
+import SunburstChartWidget from "../components/charts/SunburstChartWidget";
+import SankeyDiagramWidget from "../components/charts/SankeyDiagramWidget";
+import ChordDiagramWidget from "../components/charts/ChordDiagramWidget";
 import FunnelChartWidget from "../components/charts/FunnelChartWidget";
-import StackedBarChartWidget from "../components/charts/StackedBarChartWidget";
-import BiaxialLineChartWidget from "../components/charts/BiaxialLineChartWidget";
-import BiaxialBarChartWidget from "../components/charts/BiaxialBarChartWidget";
-import StepLineChartWidget from "../components/charts/StepLineChartWidget";
+import WaterfallChartWidget from "../components/charts/WaterfallChartWidget";
+import NetworkGraphWidget from "../components/charts/NetworkGraphWidget";
+import ForceDirectedGraphWidget from "../components/charts/ForceDirectedGraphWidget";
+import ParallelCoordinatesPlotWidget from "../components/charts/ParallelCoordinatesPlotWidget";
+import CandlestickChartWidget from "../components/charts/CandlestickChartWidget";
+import OhlcChartWidget from "../components/charts/OhlcChartWidget";
+import GeoMapWidget from "../components/charts/GeoMapWidget";
+import ChoroplethMapWidget from "../components/charts/ChoroplethMapWidget";
+import HeatMapWidget from "../components/charts/HeatMapWidget";
+import ClusterMapWidget from "../components/charts/ClusterMapWidget";
+import RouteTrackingMapWidget from "../components/charts/RouteTrackingMapWidget";
+import TimelineChartWidget from "../components/charts/TimelineChartWidget";
+import EventTimelineWidget from "../components/charts/EventTimelineWidget";
+import GanttChartWidget from "../components/charts/GanttChartWidget";
+import ScheduleTimelineWidget from "../components/charts/ScheduleTimelineWidget";
+import PivotTableWidget from "../components/charts/PivotTableWidget";
+import DataTableWidget from "../components/charts/DataTableWidget";
+import DrilldownTableWidget from "../components/charts/DrilldownTableWidget";
+import CorrelationMatrixWidget from "../components/charts/CorrelationMatrixWidget";
+import ControlChartWidget from "../components/charts/ControlChartWidget";
+import AnomalyDetectionChartWidget from "../components/charts/AnomalyDetectionChartWidget";
+import ForecastChartWidget from "../components/charts/ForecastChartWidget";
+import DigitalTwinWidgetWidget from "../components/charts/DigitalTwinWidgetWidget";
+import DeviceStatusGridWidget from "../components/charts/DeviceStatusGridWidget";
+import AlarmeventPanelWidget from "../components/charts/AlarmeventPanelWidget";
+import FloorPlanVisualizationWidget from "../components/charts/FloorPlanVisualizationWidget";
+import AssetTrackingWidgetWidget from "../components/charts/AssetTrackingWidgetWidget";
+import TankLevelVisualizationWidget from "../components/charts/TankLevelVisualizationWidget";
+import BatteryHealthWidgetWidget from "../components/charts/BatteryHealthWidgetWidget";
+import SensorTelemetryWidgetWidget from "../components/charts/SensorTelemetryWidgetWidget";
+import ProcessFlowDiagramWidget from "../components/charts/ProcessFlowDiagramWidget";
+import OeeDashboardWidgetWidget from "../components/charts/OeeDashboardWidgetWidget";
+import RealtimeLogViewerWidget from "../components/charts/RealtimeLogViewerWidget";
+import TopnRankingChartWidget from "../components/charts/TopnRankingChartWidget";
+import WordCloudWidget from "../components/charts/WordCloudWidget";
+import CohortAnalysisChartWidget from "../components/charts/CohortAnalysisChartWidget";
+import RetentionCurveWidget from "../components/charts/RetentionCurveWidget";
+import TreeGraphWidget from "../components/charts/TreeGraphWidget";
+import DependencyGraphWidget from "../components/charts/DependencyGraphWidget";
+import ResourceUtilizationChartWidget from "../components/charts/ResourceUtilizationChartWidget";
+import CapacityPlanningChartWidget from "../components/charts/CapacityPlanningChartWidget";
+import AvailabilityuptimeChartWidget from "../components/charts/AvailabilityuptimeChartWidget";
+import SlaComplianceChartWidget from "../components/charts/SlaComplianceChartWidget";
+import MultiseriesLiveMonitoringChartWidget from "../components/charts/MultiseriesLiveMonitoringChartWidget";
+import StatusTimelineWidget from "../components/charts/StatusTimelineWidget";
+import SwimlaneChartWidget from "../components/charts/SwimlaneChartWidget";
+import KanbanWidgetWidget from "../components/charts/KanbanWidgetWidget";
+import CalendarViewWidget from "../components/charts/CalendarViewWidget";
+import MetricComparisonWidgetWidget from "../components/charts/MetricComparisonWidgetWidget";
+import GoalVsActualWidgetWidget from "../components/charts/GoalVsActualWidgetWidget";
+import BenchmarkComparisonChartWidget from "../components/charts/BenchmarkComparisonChartWidget";
+import RiskMatrixWidget from "../components/charts/RiskMatrixWidget";
+import GeographicDensityMapWidget from "../components/charts/GeographicDensityMapWidget";
+import HexbinChartWidget from "../components/charts/HexbinChartWidget";
+import MosaicChartWidget from "../components/charts/MosaicChartWidget";
+import PyramidChartWidget from "../components/charts/PyramidChartWidget";
+import PopulationPyramidWidget from "../components/charts/PopulationPyramidWidget";
+import CircularProgressWidgetWidget from "../components/charts/CircularProgressWidgetWidget";
+import ScorecardWidgetWidget from "../components/charts/ScorecardWidgetWidget";
+import ExecutiveSummaryWidgetWidget from "../components/charts/ExecutiveSummaryWidgetWidget";
+import AiInsightsWidgetWidget from "../components/charts/AiInsightsWidgetWidget";
+import RootCauseAnalysisWidgetWidget from "../components/charts/RootCauseAnalysisWidgetWidget";
+import PredictiveMaintenanceWidgetWidget from "../components/charts/PredictiveMaintenanceWidgetWidget";
+import QueryResultsExplorerWidget from "../components/charts/QueryResultsExplorerWidget";
+import InteractiveFilterPanelWidget from "../components/charts/InteractiveFilterPanelWidget";
+import DashboardNavigatorWidgetWidget from "../components/charts/DashboardNavigatorWidgetWidget";
 
 import StatsCard from "../components/widgets/StatsCard";
 import DashboardSwitcher from "../components/widgets/DashboardSwitcher";
@@ -322,23 +408,109 @@ const Dashboard = () => {
               defaultValue=""
             >
               <option value="" disabled>+ Add Widget</option>
-              <option value="line-chart">Line Chart (Live)</option>
-              <option value="bar-chart">Bar Chart</option>
+                            <option value="line-chart">Line Chart (Live)</option>
+              <option value="spline-chart">Spline Chart</option>
+              <option value="step-line-chart">Step Line Chart</option>
               <option value="area-chart">Area Chart</option>
               <option value="stacked-area-chart">Stacked Area Chart</option>
+              <option value="stream-graph">Stream Graph</option>
+              <option value="bar-chart">Bar Chart</option>
+              <option value="stacked-bar-chart">Stacked Bar Chart</option>
+              <option value="horizontal-bar-chart">Horizontal Bar Chart</option>
+              <option value="grouped-bar-chart">Grouped Bar Chart</option>
+              <option value="biaxial-bar-chart">Biaxial Bar Chart</option>
+              <option value="biaxial-line-chart">Biaxial Line Chart</option>
+              <option value="composed-chart">Composed Chart</option>
               <option value="pie-chart">Pie Chart</option>
               <option value="donut-chart">Donut Chart</option>
+              <option value="radial-bar-chart">Radial Bar Chart</option>
+              <option value="gauge-chart">Gauge Chart</option>
+              <option value="linear-gauge">Linear Gauge</option>
+              <option value="progress-bar">Progress Bar</option>
+              <option value="bullet-chart">Bullet Chart</option>
+              <option value="kpi-card">KPI Card</option>
+              <option value="sparkline">Sparkline</option>
               <option value="scatter-chart">Scatter Chart</option>
               <option value="bubble-chart">Bubble Chart</option>
+              <option value="histogram">Histogram</option>
+              <option value="box-plot">Box Plot</option>
+              <option value="violin-plot">Violin Plot</option>
+              <option value="density-plot">Density Plot</option>
+              <option value="pareto-chart">Pareto Chart</option>
               <option value="radar-chart">Radar Chart</option>
-              <option value="radial-bar-chart">Radial Bar Chart</option>
-              <option value="composed-chart">Composed Chart</option>
+              <option value="heatmap">Heatmap</option>
+              <option value="calendar-heatmap">Calendar Heatmap</option>
               <option value="treemap">Treemap</option>
+              <option value="sunburst-chart">Sunburst Chart</option>
+              <option value="sankey-diagram">Sankey Diagram</option>
+              <option value="chord-diagram">Chord Diagram</option>
               <option value="funnel-chart">Funnel Chart</option>
-              <option value="stacked-bar-chart">Stacked Bar Chart</option>
-              <option value="biaxial-line-chart">Biaxial Line Chart</option>
-              <option value="biaxial-bar-chart">Biaxial Bar Chart</option>
-              <option value="step-line-chart">Step Line Chart</option>
+              <option value="waterfall-chart">Waterfall Chart</option>
+              <option value="network-graph">Network Graph</option>
+              <option value="force-directed-graph">Force Directed Graph</option>
+              <option value="parallel-coordinates-plot">Parallel Coordinates Plot</option>
+              <option value="candlestick-chart">Candlestick Chart</option>
+              <option value="ohlc-chart">OHLC Chart</option>
+              <option value="geo-map">Geo Map</option>
+              <option value="choropleth-map">Choropleth Map</option>
+              <option value="heat-map">Heat Map (Geospatial)</option>
+              <option value="cluster-map">Cluster Map</option>
+              <option value="route-tracking-map">Route Tracking Map</option>
+              <option value="timeline-chart">Timeline Chart</option>
+              <option value="event-timeline">Event Timeline</option>
+              <option value="gantt-chart">Gantt Chart</option>
+              <option value="schedule-timeline">Schedule Timeline</option>
+              <option value="pivot-table">Pivot Table</option>
+              <option value="data-table">Data Table</option>
+              <option value="drilldown-table">Drill-Down Table</option>
+              <option value="correlation-matrix">Correlation Matrix</option>
+              <option value="control-chart">Control Chart (SPC)</option>
+              <option value="anomaly-detection-chart">Anomaly Detection Chart</option>
+              <option value="forecast-chart">Forecast Chart</option>
+              <option value="digital-twin-widget">Digital Twin Widget</option>
+              <option value="device-status-grid">Device Status Grid</option>
+              <option value="alarmevent-panel">Alarm/Event Panel</option>
+              <option value="floor-plan-visualization">Floor Plan Visualization</option>
+              <option value="asset-tracking-widget">Asset Tracking Widget</option>
+              <option value="tank-level-visualization">Tank Level Visualization</option>
+              <option value="battery-health-widget">Battery Health Widget</option>
+              <option value="sensor-telemetry-widget">Sensor Telemetry Widget</option>
+              <option value="process-flow-diagram">Process Flow Diagram</option>
+              <option value="oee-dashboard-widget">OEE Dashboard Widget</option>
+              <option value="realtime-log-viewer">Real-Time Log Viewer</option>
+              <option value="topn-ranking-chart">Top-N Ranking Chart</option>
+              <option value="word-cloud">Word Cloud</option>
+              <option value="cohort-analysis-chart">Cohort Analysis Chart</option>
+              <option value="retention-curve">Retention Curve</option>
+              <option value="tree-graph">Tree Graph</option>
+              <option value="dependency-graph">Dependency Graph</option>
+              <option value="resource-utilization-chart">Resource Utilization Chart</option>
+              <option value="capacity-planning-chart">Capacity Planning Chart</option>
+              <option value="availabilityuptime-chart">Availability/Uptime Chart</option>
+              <option value="sla-compliance-chart">SLA Compliance Chart</option>
+              <option value="multiseries-live-monitoring-chart">Multi-Series Live Monitoring Chart</option>
+              <option value="status-timeline">Status Timeline</option>
+              <option value="swimlane-chart">Swimlane Chart</option>
+              <option value="kanban-widget">Kanban Widget</option>
+              <option value="calendar-view">Calendar View</option>
+              <option value="metric-comparison-widget">Metric Comparison Widget</option>
+              <option value="goal-vs-actual-widget">Goal vs Actual Widget</option>
+              <option value="benchmark-comparison-chart">Benchmark Comparison Chart</option>
+              <option value="risk-matrix">Risk Matrix</option>
+              <option value="geographic-density-map">Geographic Density Map</option>
+              <option value="hexbin-chart">Hexbin Chart</option>
+              <option value="mosaic-chart">Mosaic Chart</option>
+              <option value="pyramid-chart">Pyramid Chart</option>
+              <option value="population-pyramid">Population Pyramid</option>
+              <option value="circular-progress-widget">Circular Progress Widget</option>
+              <option value="scorecard-widget">Scorecard Widget</option>
+              <option value="executive-summary-widget">Executive Summary Widget</option>
+              <option value="ai-insights-widget">AI Insights Widget</option>
+              <option value="root-cause-analysis-widget">Root Cause Analysis Widget</option>
+              <option value="predictive-maintenance-widget">Predictive Maintenance Widget</option>
+              <option value="query-results-explorer">Query Results Explorer</option>
+              <option value="interactive-filter-panel">Interactive Filter Panel</option>
+              <option value="dashboard-navigator-widget">Dashboard Navigator Widget</option>
             </select>
           </div>
 
@@ -464,23 +636,109 @@ const Dashboard = () => {
             </button>
 
             <div className="w-full h-full flex-1">
-              {widget.type === "line-chart" && <LineChartWidget datasourceId={widget.datasourceId} queryKey={widget.queryKey} title={widget.title} />}
-              {widget.type === "bar-chart" && <BarChartWidget datasourceId={widget.datasourceId} queryKey={widget.queryKey} title={widget.title} />}
-              {widget.type === "area-chart" && <AreaChartWidget title={widget.title} />}
-              {widget.type === "stacked-area-chart" && <StackedAreaChartWidget title={widget.title} />}
-              {widget.type === "pie-chart" && <PieChartWidget title={widget.title} />}
-              {widget.type === "donut-chart" && <DonutChartWidget title={widget.title} />}
-              {widget.type === "scatter-chart" && <ScatterChartWidget title={widget.title} />}
-              {widget.type === "bubble-chart" && <BubbleChartWidget title={widget.title} />}
-              {widget.type === "radar-chart" && <RadarChartWidget title={widget.title} />}
-              {widget.type === "radial-bar-chart" && <RadialBarChartWidget title={widget.title} />}
-              {widget.type === "composed-chart" && <ComposedChartWidget title={widget.title} />}
-              {widget.type === "treemap" && <TreemapWidget title={widget.title} />}
-              {widget.type === "funnel-chart" && <FunnelChartWidget title={widget.title} />}
-              {widget.type === "stacked-bar-chart" && <StackedBarChartWidget title={widget.title} />}
-              {widget.type === "biaxial-line-chart" && <BiaxialLineChartWidget title={widget.title} />}
-              {widget.type === "biaxial-bar-chart" && <BiaxialBarChartWidget title={widget.title} />}
-              {widget.type === "step-line-chart" && <StepLineChartWidget title={widget.title} />}
+                            {widget.type === "line-chart" && <LineChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "spline-chart" && <SplineChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "step-line-chart" && <StepLineChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "area-chart" && <AreaChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "stacked-area-chart" && <StackedAreaChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "stream-graph" && <StreamGraphWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "bar-chart" && <BarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "stacked-bar-chart" && <StackedBarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "horizontal-bar-chart" && <HorizontalBarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "grouped-bar-chart" && <GroupedBarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "biaxial-bar-chart" && <BiaxialBarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "biaxial-line-chart" && <BiaxialLineChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "composed-chart" && <ComposedChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "pie-chart" && <PieChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "donut-chart" && <DonutChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "radial-bar-chart" && <RadialBarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "gauge-chart" && <GaugeChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "linear-gauge" && <LinearGaugeWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "progress-bar" && <ProgressBarWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "bullet-chart" && <BulletChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "kpi-card" && <KpiCardWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "sparkline" && <SparklineWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "scatter-chart" && <ScatterChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "bubble-chart" && <BubbleChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "histogram" && <HistogramWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "box-plot" && <BoxPlotWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "violin-plot" && <ViolinPlotWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "density-plot" && <DensityPlotWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "pareto-chart" && <ParetoChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "radar-chart" && <RadarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "heatmap" && <HeatmapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "calendar-heatmap" && <CalendarHeatmapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "treemap" && <TreemapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "sunburst-chart" && <SunburstChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "sankey-diagram" && <SankeyDiagramWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "chord-diagram" && <ChordDiagramWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "funnel-chart" && <FunnelChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "waterfall-chart" && <WaterfallChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "network-graph" && <NetworkGraphWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "force-directed-graph" && <ForceDirectedGraphWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "parallel-coordinates-plot" && <ParallelCoordinatesPlotWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "candlestick-chart" && <CandlestickChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "ohlc-chart" && <OhlcChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "geo-map" && <GeoMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "choropleth-map" && <ChoroplethMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "heat-map" && <HeatMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "cluster-map" && <ClusterMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "route-tracking-map" && <RouteTrackingMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "timeline-chart" && <TimelineChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "event-timeline" && <EventTimelineWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "gantt-chart" && <GanttChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "schedule-timeline" && <ScheduleTimelineWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "pivot-table" && <PivotTableWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "data-table" && <DataTableWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "drilldown-table" && <DrilldownTableWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "correlation-matrix" && <CorrelationMatrixWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "control-chart" && <ControlChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "anomaly-detection-chart" && <AnomalyDetectionChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "forecast-chart" && <ForecastChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "digital-twin-widget" && <DigitalTwinWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "device-status-grid" && <DeviceStatusGridWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "alarmevent-panel" && <AlarmeventPanelWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "floor-plan-visualization" && <FloorPlanVisualizationWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "asset-tracking-widget" && <AssetTrackingWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "tank-level-visualization" && <TankLevelVisualizationWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "battery-health-widget" && <BatteryHealthWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "sensor-telemetry-widget" && <SensorTelemetryWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "process-flow-diagram" && <ProcessFlowDiagramWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "oee-dashboard-widget" && <OeeDashboardWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "realtime-log-viewer" && <RealtimeLogViewerWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "topn-ranking-chart" && <TopnRankingChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "word-cloud" && <WordCloudWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "cohort-analysis-chart" && <CohortAnalysisChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "retention-curve" && <RetentionCurveWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "tree-graph" && <TreeGraphWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "dependency-graph" && <DependencyGraphWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "resource-utilization-chart" && <ResourceUtilizationChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "capacity-planning-chart" && <CapacityPlanningChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "availabilityuptime-chart" && <AvailabilityuptimeChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "sla-compliance-chart" && <SlaComplianceChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "multiseries-live-monitoring-chart" && <MultiseriesLiveMonitoringChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "status-timeline" && <StatusTimelineWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "swimlane-chart" && <SwimlaneChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "kanban-widget" && <KanbanWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "calendar-view" && <CalendarViewWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "metric-comparison-widget" && <MetricComparisonWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "goal-vs-actual-widget" && <GoalVsActualWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "benchmark-comparison-chart" && <BenchmarkComparisonChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "risk-matrix" && <RiskMatrixWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "geographic-density-map" && <GeographicDensityMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "hexbin-chart" && <HexbinChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "mosaic-chart" && <MosaicChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "pyramid-chart" && <PyramidChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "population-pyramid" && <PopulationPyramidWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "circular-progress-widget" && <CircularProgressWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "scorecard-widget" && <ScorecardWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "executive-summary-widget" && <ExecutiveSummaryWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "ai-insights-widget" && <AiInsightsWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "root-cause-analysis-widget" && <RootCauseAnalysisWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "predictive-maintenance-widget" && <PredictiveMaintenanceWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "query-results-explorer" && <QueryResultsExplorerWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "interactive-filter-panel" && <InteractiveFilterPanelWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+              {widget.type === "dashboard-navigator-widget" && <DashboardNavigatorWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
             </div>
 
             {/* RESIZE HANDLE */}

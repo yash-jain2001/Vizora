@@ -25,7 +25,8 @@ const getDashboardStats = async (req, res) => {
         temperature = Math.floor(Math.random() * 15) + 22
       }
     } catch (e) {
-      console.log('InfluxDB query failed, using fallback temperature:', e.message)
+      const msg = e.errors ? e.errors[0].code : e.message;
+      console.log('InfluxDB query failed, using fallback temperature:', msg)
       temperature = Math.floor(Math.random() * 15) + 22
     }
 
@@ -64,7 +65,8 @@ const getLineChartData = async (req, res) => {
         }
       })
     } catch (e) {
-      console.log('InfluxDB line chart query failed:', e.message)
+      const msg = e.errors ? e.errors[0].code : e.message;
+      console.log('InfluxDB line chart query failed:', msg)
     }
 
     if (data.length === 0) {
