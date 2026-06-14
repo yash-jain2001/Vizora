@@ -26,7 +26,7 @@ const getDashboardStats = async (req, res) => {
       }
     } catch (e) {
       const msg = e.errors ? e.errors[0].code : e.message;
-      console.log('InfluxDB query failed, using fallback temperature:', msg)
+      console.log('InfluxDB query failed, using fallback temperature:', msg);
       temperature = Math.floor(Math.random() * 15) + 22
     }
 
