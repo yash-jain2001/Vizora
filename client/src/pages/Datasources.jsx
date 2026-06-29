@@ -131,6 +131,46 @@ const Datasources = () => {
         defaultName = "CSV File Datasource";
         defaultUrl = "c:/data/sensors.csv";
         break;
+      case "mysql":
+        defaultName = "MySQL Database";
+        defaultUrl = "localhost:3306";
+        break;
+      case "mongodb":
+        defaultName = "MongoDB Database";
+        defaultUrl = "mongodb://localhost:27017";
+        break;
+      case "mssql":
+        defaultName = "SQL Server Database";
+        defaultUrl = "localhost:1433";
+        break;
+      case "elasticsearch":
+        defaultName = "Elasticsearch Cluster";
+        defaultUrl = "http://localhost:9200";
+        break;
+      case "redis":
+        defaultName = "Redis Store";
+        defaultUrl = "redis://localhost:6379";
+        break;
+      case "sqlite":
+        defaultName = "SQLite Database File";
+        defaultUrl = "c:/data/app.db";
+        break;
+      case "clickhouse":
+        defaultName = "ClickHouse Database";
+        defaultUrl = "http://localhost:8123";
+        break;
+      case "cassandra":
+        defaultName = "Cassandra Database";
+        defaultUrl = "localhost:9042";
+        break;
+      case "oracle":
+        defaultName = "Oracle Database";
+        defaultUrl = "localhost:1521/ORCL";
+        break;
+      case "graphite":
+        defaultName = "Graphite Server";
+        defaultUrl = "http://localhost:80";
+        break;
       default:
         defaultName = "New Connection";
         defaultUrl = "http://localhost";
@@ -294,6 +334,77 @@ const Datasources = () => {
             <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12a2.25 2.25 0 014.5-9.75h15A2.25 2.25 0 0121.75 12v.75m-19.5 0A2.25 2.25 0 004.5 15h15a2.25 2.25 0 002.25-2.25m-19.5 0v.25A2.25 2.25 0 004.5 17.5h15a2.25 2.25 0 002.25-2.25V13m-19.5 0V9a2.25 2.25 0 012.25-2.25h3.093c.594 0 1.157.237 1.57.659l2.25 2.25a2.25 2.25 0 001.57.659H19.5A2.25 2.25 0 0121.75 12v1" />
           </svg>
         );
+      case "mysql":
+        return (
+          <svg className={sizeClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m-16 5c0 2.21 3.582 4 8 4s8-1.79 8-4" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 11.5c0-.83 1.34-1.5 3-1.5s3 .67 3 1.5-1.34 1.5-3 1.5-3-.67-3-1.5z" />
+          </svg>
+        );
+      case "mongodb":
+        return (
+          <svg className={sizeClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 2C8.5 6 6 9.5 6 13a6 6 0 1012 0c0-3.5-2.5-7-6-11z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v20M9 13c1.5 1 4.5 1 6 0" />
+          </svg>
+        );
+      case "mssql":
+        return (
+          <svg className={sizeClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 5h16v14H4V5z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M4 12h16M8 8.5h8M8 15.5h8" />
+          </svg>
+        );
+      case "elasticsearch":
+        return (
+          <svg className={sizeClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="1.5" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 11h6" />
+          </svg>
+        );
+      case "redis":
+        return (
+          <svg className={sizeClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 4h16v5H4V4zm0 11h16v5H4v-5zm0-5.5h16v1H4v-1zM9 4v16M15 4v16" />
+          </svg>
+        );
+      case "sqlite":
+        return (
+          <svg className={sizeClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12M6 12h12" />
+          </svg>
+        );
+      case "clickhouse":
+        return (
+          <svg className={sizeClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 20V8h4v12H4zm6 0V4h4v16h-4zm6 0v-8h4v8h-4z" />
+          </svg>
+        );
+      case "cassandra":
+        return (
+          <svg className={sizeClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <circle cx="12" cy="5" r="3" stroke="currentColor" />
+            <circle cx="5" cy="17" r="3" stroke="currentColor" />
+            <circle cx="19" cy="17" r="3" stroke="currentColor" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8l-5 6m10 0l-5-6M7.5 17h9" />
+          </svg>
+        );
+      case "oracle":
+        return (
+          <svg className={sizeClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <ellipse cx="12" cy="12" rx="10" ry="7" stroke="currentColor" />
+            <ellipse cx="12" cy="12" rx="6" ry="4" stroke="currentColor" />
+          </svg>
+        );
+      case "graphite":
+        return (
+          <svg className={sizeClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v18h18" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 18l5-6 4 4 8-9" />
+          </svg>
+        );
       default:
         return (
           <svg className={sizeClass} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
@@ -322,6 +433,26 @@ const Datasources = () => {
         return base + "bg-yellow-500/10 text-yellow-400 border-yellow-500/20";
       case "csv":
         return base + "bg-orange-500/10 text-orange-400 border-orange-500/20";
+      case "mysql":
+        return base + "bg-cyan-500/10 text-cyan-400 border-cyan-500/20";
+      case "mongodb":
+        return base + "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+      case "mssql":
+        return base + "bg-red-500/10 text-red-400 border-red-500/20";
+      case "elasticsearch":
+        return base + "bg-amber-500/10 text-amber-400 border-amber-500/20";
+      case "redis":
+        return base + "bg-rose-500/10 text-rose-400 border-rose-500/20";
+      case "sqlite":
+        return base + "bg-violet-500/10 text-violet-400 border-violet-500/20";
+      case "clickhouse":
+        return base + "bg-orange-500/10 text-orange-400 border-orange-500/20";
+      case "cassandra":
+        return base + "bg-sky-500/10 text-sky-400 border-sky-500/20";
+      case "oracle":
+        return base + "bg-red-500/10 text-red-400 border-red-500/20";
+      case "graphite":
+        return base + "bg-slate-500/10 text-slate-400 border-slate-500/20";
       default:
         return base + "bg-slate-500/10 text-slate-400 border-slate-500/20";
     }
@@ -347,14 +478,26 @@ const Datasources = () => {
         }
       } else if (formData.type === "mqtt") {
         return formData.topic.trim() !== "";
-      } else if (formData.type === "postgresql") {
+      } else if (
+        formData.type === "postgresql" ||
+        formData.type === "mysql" ||
+        formData.type === "mongodb" ||
+        formData.type === "mssql" ||
+        formData.type === "cassandra" ||
+        formData.type === "oracle" ||
+        formData.type === "clickhouse"
+      ) {
         return formData.database.trim() !== "";
       } else if (
         formData.type === "prometheus" ||
         formData.type === "rest" ||
         formData.type === "websocket" ||
         formData.type === "loki" ||
-        formData.type === "csv"
+        formData.type === "csv" ||
+        formData.type === "elasticsearch" ||
+        formData.type === "redis" ||
+        formData.type === "sqlite" ||
+        formData.type === "graphite"
       ) {
         return true;
       }
@@ -366,9 +509,18 @@ const Datasources = () => {
     switch (formData.type) {
       case "influxdb":
       case "postgresql":
+      case "mysql":
+      case "mongodb":
+      case "mssql":
+      case "sqlite":
+      case "clickhouse":
+      case "cassandra":
+      case "oracle":
         return "Database settings";
       case "mqtt":
       case "websocket":
+      case "redis":
+      case "graphite":
         return "Connection settings";
       default:
         return "Ingestion settings";
@@ -385,6 +537,16 @@ const Datasources = () => {
       case "rest": return "REST API";
       case "websocket": return "WebSocket";
       case "csv": return "CSV / File";
+      case "mysql": return "MySQL";
+      case "mongodb": return "MongoDB";
+      case "mssql": return "Microsoft SQL Server";
+      case "elasticsearch": return "Elasticsearch";
+      case "redis": return "Redis";
+      case "sqlite": return "SQLite";
+      case "clickhouse": return "ClickHouse";
+      case "cassandra": return "Cassandra";
+      case "oracle": return "Oracle Database";
+      case "graphite": return "Graphite";
       default: return "Data Source";
     }
   };
@@ -407,6 +569,26 @@ const Datasources = () => {
         return "Stream telemetry data from a WebSocket daemon";
       case "csv":
         return "Ingest static datasets from a local CSV file";
+      case "mysql":
+        return "Connect to MySQL relational database";
+      case "mongodb":
+        return "Connect to MongoDB NoSQL document database";
+      case "mssql":
+        return "Connect to Microsoft SQL Server database";
+      case "elasticsearch":
+        return "Connect to Elasticsearch search and analytics engine";
+      case "redis":
+        return "Connect to Redis in-memory database";
+      case "sqlite":
+        return "Connect to local SQLite database file";
+      case "clickhouse":
+        return "Connect to ClickHouse column-oriented database";
+      case "cassandra":
+        return "Connect to Apache Cassandra distributed database";
+      case "oracle":
+        return "Connect to Oracle relational database";
+      case "graphite":
+        return "Connect to Graphite metrics and monitoring system";
       default:
         return "Enter parameters to configure your data connection";
     }
@@ -774,8 +956,444 @@ const Datasources = () => {
             </div>
           </div>
         );
-      default:
-        return null;
+      // New Connector: MySQL
+        case "mysql":
+          return (
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  Host <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="host"
+                  value={formData.host}
+                  onChange={handleChange}
+                  placeholder="e.g. localhost"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Port</label>
+                <input
+                  type="number"
+                  name="port"
+                  value={formData.port}
+                  onChange={handleChange}
+                  placeholder="3306"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Database</label>
+                <input
+                  type="text"
+                  name="database"
+                  value={formData.database}
+                  onChange={handleChange}
+                  placeholder="e.g. vizordb"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Username</label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="root"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+            </div>
+          );
+        // New Connector: MongoDB
+        case "mongodb":
+          return (
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  Connection URI <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="uri"
+                  value={formData.uri}
+                  onChange={handleChange}
+                  placeholder="e.g. mongodb://localhost:27017"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+            </div>
+          );
+        // New Connector: MSSQL
+        case "mssql":
+          return (
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  Host <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="host"
+                  value={formData.host}
+                  onChange={handleChange}
+                  placeholder="e.g. localhost"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Port</label>
+                <input
+                  type="number"
+                  name="port"
+                  value={formData.port}
+                  onChange={handleChange}
+                  placeholder="1433"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Database</label>
+                <input
+                  type="text"
+                  name="database"
+                  value={formData.database}
+                  onChange={handleChange}
+                  placeholder="e.g. vizordb"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Username</label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="sa"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+            </div>
+          );
+        // New Connector: Elasticsearch
+        case "elasticsearch":
+          return (
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  URL <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="url"
+                  value={formData.url}
+                  onChange={handleChange}
+                  placeholder="e.g. http://localhost:9200"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Username</label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Optional"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+            </div>
+          );
+        // New Connector: Redis
+        case "redis":
+          return (
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  Host <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="host"
+                  value={formData.host}
+                  onChange={handleChange}
+                  placeholder="e.g. localhost"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Port</label>
+                <input
+                  type="number"
+                  name="port"
+                  value={formData.port}
+                  onChange={handleChange}
+                  placeholder="6379"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Optional"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+            </div>
+          );
+        // New Connector: SQLite
+        case "sqlite":
+          return (
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  File Path <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="filePath"
+                  value={formData.filePath}
+                  onChange={handleChange}
+                  placeholder="e.g. C:/data/vizora.db"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+            </div>
+          );
+        // New Connector: ClickHouse
+        case "clickhouse":
+          return (
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  URL <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="url"
+                  value={formData.url}
+                  onChange={handleChange}
+                  placeholder="e.g. http://localhost:8123"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Username</label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Optional"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+            </div>
+          );
+        // New Connector: Cassandra
+        case "cassandra":
+          return (
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  Contact Point <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="host"
+                  value={formData.host}
+                  onChange={handleChange}
+                  placeholder="e.g. localhost"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Port</label>
+                <input
+                  type="number"
+                  name="port"
+                  value={formData.port}
+                  onChange={handleChange}
+                  placeholder="9042"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Keyspace</label>
+                <input
+                  type="text"
+                  name="keyspace"
+                  value={formData.keyspace}
+                  onChange={handleChange}
+                  placeholder="e.g. vizora"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Username</label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Optional"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+            </div>
+          );
+        // New Connector: Oracle
+        case "oracle":
+          return (
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  Host <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="host"
+                  value={formData.host}
+                  onChange={handleChange}
+                  placeholder="e.g. localhost"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Port</label>
+                <input
+                  type="number"
+                  name="port"
+                  value={formData.port}
+                  onChange={handleChange}
+                  placeholder="1521"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Service Name / SID</label>
+                <input
+                  type="text"
+                  name="serviceName"
+                  value={formData.serviceName}
+                  onChange={handleChange}
+                  placeholder="ORCL"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Username</label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="admin"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                />
+              </div>
+            </div>
+          );
+        // New Connector: Graphite
+        case "graphite":
+          return (
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-extrabold text-slate-300">
+                  URL <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="url"
+                  value={formData.url}
+                  onChange={handleChange}
+                  placeholder="e.g. http://localhost:2003"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/10 text-white text-sm font-semibold outline-hidden w-full"
+                  required
+                />
+              </div>
+            </div>
+          );
+        default:
+          return null;
     }
   };
 
@@ -967,7 +1585,7 @@ const Datasources = () => {
 
       {/* VIEW: SELECT CONNECTOR GRID */}
       {view === "select-connector" && (
-        <div className="max-w-4xl mx-auto bg-brand-card/90 border border-brand-border p-8 rounded-3xl shadow-[0_16px_48px_rgba(0,0,0,0.5)] select-none animate-fade-in">
+        <div className="max-w-4xl mx-auto bg-brand-card/90 border border-brand-border p-8 rounded-3xl shadow-[0_16px_48px_rgba(0,0,0,0.5)] select-none animate-fade-in overflow-y-auto max-h-screen">
           {/* HEADER */}
           <div className="flex justify-between items-start mb-8">
             <div>
@@ -1153,7 +1771,206 @@ const Datasources = () => {
                 <p className="text-xs text-slate-400 leading-relaxed">Upload static datasets for one-time or scheduled use.</p>
               </div>
             </div>
-          </div>
+          <div
+  onClick={() => handleSelectConnector("mysql")}
+  className="relative flex items-start gap-4 bg-[#141b2b]/60 border border-white/5 hover:border-green-500/50 hover:shadow-[0_0_15px_rgba(16,185,129,0.1)] p-5 rounded-2xl cursor-pointer hover:bg-[#1e293b]/50 transition-all duration-300 group"
+>
+  <div className="p-3 bg-slate-900/80 rounded-xl border border-white/5 text-[#10b981] group-hover:bg-[#10b981]/10 group-hover:border-[#10b981]/30 transition-colors">
+    {renderConnectorIcon("mysql", "w-6 h-6")}
+  </div>
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between mb-1">
+      <h3 className="font-bold text-white group-hover:text-[#10b981] transition-colors flex items-center gap-1">
+        MySQL
+        <svg className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </h3>
+    </div>
+    <p className="text-xs text-slate-400 leading-relaxed">Connect to a MySQL relational database.</p>
+  </div>
+</div>
+
+<div
+  onClick={() => handleSelectConnector("mongodb")}
+  className="relative flex items-start gap-4 bg-[#141b2b]/60 border border-white/5 hover:border-green-600/50 hover:shadow-[0_0_15px_rgba(0,200,83,0.1)] p-5 rounded-2xl cursor-pointer hover:bg-[#1e293b]/50 transition-all duration-300 group"
+>
+  <div className="p-3 bg-slate-900/80 rounded-xl border border-white/5 text-[#00c853] group-hover:bg-[#00c853]/10 group-hover:border-[#00c853]/30 transition-colors">
+    {renderConnectorIcon("mongodb", "w-6 h-6")}
+  </div>
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between mb-1">
+      <h3 className="font-bold text-white group-hover:text-[#00c853] transition-colors flex items-center gap-1">
+        MongoDB
+        <svg className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </h3>
+    </div>
+    <p className="text-xs text-slate-400 leading-relaxed">Connect to a MongoDB document store.</p>
+  </div>
+</div>
+
+<div
+  onClick={() => handleSelectConnector("mssql")}
+  className="relative flex items-start gap-4 bg-[#141b2b]/60 border border-white/5 hover:border-blue-600/50 hover:shadow-[0_0_15px_rgba(59,130,246,0.1)] p-5 rounded-2xl cursor-pointer hover:bg-[#1e293b]/50 transition-all duration-300 group"
+>
+  <div className="p-3 bg-slate-900/80 rounded-xl border border-white/5 text-[#2563eb] group-hover:bg-[#2563eb]/10 group-hover:border-[#2563eb]/30 transition-colors">
+    {renderConnectorIcon("mssql", "w-6 h-6")}
+  </div>
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between mb-1">
+      <h3 className="font-bold text-white group-hover:text-[#2563eb] transition-colors flex items-center gap-1">
+        MSSQL
+        <svg className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </h3>
+    </div>
+    <p className="text-xs text-slate-400 leading-relaxed">Connect to a Microsoft SQL Server database.</p>
+  </div>
+</div>
+
+<div
+  onClick={() => handleSelectConnector("elasticsearch")}
+  className="relative flex items-start gap-4 bg-[#141b2b]/60 border border-white/5 hover:border-yellow-500/50 hover:shadow-[0_0_15px_rgba(234,179,8,0.1)] p-5 rounded-2xl cursor-pointer hover:bg-[#1e293b]/50 transition-all duration-300 group"
+>
+  <div className="p-3 bg-slate-900/80 rounded-xl border border-white/5 text-[#eab308] group-hover:bg-[#eab308]/10 group-hover:border-[#eab308]/30 transition-colors">
+    {renderConnectorIcon("elasticsearch", "w-6 h-6")}
+  </div>
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between mb-1">
+      <h3 className="font-bold text-white group-hover:text-[#eab308] transition-colors flex items-center gap-1">
+        Elasticsearch
+        <svg className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </h3>
+    </div>
+    <p className="text-xs text-slate-400 leading-relaxed">Search and analytics engine.</p>
+  </div>
+</div>
+
+<div
+  onClick={() => handleSelectConnector("redis")}
+  className="relative flex items-start gap-4 bg-[#141b2b]/60 border border-white/5 hover:border-red-500/50 hover:shadow-[0_0_15px_rgba(239,68,68,0.1)] p-5 rounded-2xl cursor-pointer hover:bg-[#1e293b]/50 transition-all duration-300 group"
+>
+  <div className="p-3 bg-slate-900/80 rounded-xl border border-white/5 text-[#ef4444] group-hover:bg-[#ef4444]/10 group-hover:border-[#ef4444]/30 transition-colors">
+    {renderConnectorIcon("redis", "w-6 h-6")}
+  </div>
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between mb-1">
+      <h3 className="font-bold text-white group-hover:text-[#ef4444] transition-colors flex items-center gap-1">
+        Redis
+        <svg className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </h3>
+    </div>
+    <p className="text-xs text-slate-400 leading-relaxed">In‑memory key‑value store.</p>
+  </div>
+</div>
+
+<div
+  onClick={() => handleSelectConnector("sqlite")}
+  className="relative flex items-start gap-4 bg-[#141b2b]/60 border border-white/5 hover:border-indigo-500/50 hover:shadow-[0_0_15px_rgba(99,102,241,0.1)] p-5 rounded-2xl cursor-pointer hover:bg-[#1e293b]/50 transition-all duration-300 group"
+>
+  <div className="p-3 bg-slate-900/80 rounded-xl border border-white/5 text-[#6366f1] group-hover:bg-[#6366f1]/10 group-hover:border-[#6366f1]/30 transition-colors">
+    {renderConnectorIcon("sqlite", "w-6 h-6")}
+  </div>
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between mb-1">
+      <h3 className="font-bold text-white group-hover:text-[#6366f1] transition-colors flex items-center gap-1">
+        SQLite
+        <svg className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </h3>
+    </div>
+    <p className="text-xs text-slate-400 leading-relaxed">File‑based lightweight database.</p>
+  </div>
+</div>
+
+<div
+  onClick={() => handleSelectConnector("clickhouse")}
+  className="relative flex items-start gap-4 bg-[#141b2b]/60 border border-white/5 hover:border-purple-600/50 hover:shadow-[0_0_15px_rgba(147,51,234,0.1)] p-5 rounded-2xl cursor-pointer hover:bg-[#1e293b]/50 transition-all duration-300 group"
+>
+  <div className="p-3 bg-slate-900/80 rounded-xl border border-white/5 text-[#9333ea] group-hover:bg-[#9333ea]/10 group-hover:border-[#9333ea]/30 transition-colors">
+    {renderConnectorIcon("clickhouse", "w-6 h-6")}
+  </div>
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between mb-1">
+      <h3 className="font-bold text-white group-hover:text-[#9333ea] transition-colors flex items-center gap-1">
+        ClickHouse
+        <svg className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </h3>
+    </div>
+    <p className="text-xs text-slate-400 leading-relaxed">High‑performance column‑oriented OLAP DB.</p>
+  </div>
+</div>
+
+<div
+  onClick={() => handleSelectConnector("cassandra")}
+  className="relative flex items-start gap-4 bg-[#141b2b]/60 border border-white/5 hover:border-cyan-600/50 hover:shadow-[0_0_15px_rgba(6,182,212,0.1)] p-5 rounded-2xl cursor-pointer hover:bg-[#1e293b]/50 transition-all duration-300 group"
+>
+  <div className="p-3 bg-slate-900/80 rounded-xl border border-white/5 text-[#06b6d4] group-hover:bg-[#06b6d4]/10 group-hover:border-[#06b6d4]/30 transition-colors">
+    {renderConnectorIcon("cassandra", "w-6 h-6")}
+  </div>
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between mb-1">
+      <h3 className="font-bold text-white group-hover:text-[#06b6d4] transition-colors flex items-center gap-1">
+        Cassandra
+        <svg className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </h3>
+    </div>
+    <p className="text-xs text-slate-400 leading-relaxed">Scalable NoSQL wide‑column store.</p>
+  </div>
+</div>
+
+<div
+  onClick={() => handleSelectConnector("oracle")}
+  className="relative flex items-start gap-4 bg-[#141b2b]/60 border border-white/5 hover:border-orange-600/50 hover:shadow-[0_0_15px_rgba(234,88,12,0.1)] p-5 rounded-2xl cursor-pointer hover:bg-[#1e293b]/50 transition-all duration-300 group"
+>
+  <div className="p-3 bg-slate-900/80 rounded-xl border border-white/5 text-[#ea580c] group-hover:bg-[#ea580c]/10 group-hover:border-[#ea580c]/30 transition-colors">
+    {renderConnectorIcon("oracle", "w-6 h-6")}
+  </div>
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between mb-1">
+      <h3 className="font-bold text-white group-hover:text-[#ea580c] transition-colors flex items-center gap-1">
+        Oracle
+        <svg className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </h3>
+    </div>
+    <p className="text-xs text-slate-400 leading-relaxed">Enterprise relational database.</p>
+  </div>
+</div>
+
+<div
+  onClick={() => handleSelectConnector("graphite")}
+  className="relative flex items-start gap-4 bg-[#141b2b]/60 border border-white/5 hover:border-pink-600/50 hover:shadow-[0_0_15px_rgba(236,72,153,0.1)] p-5 rounded-2xl cursor-pointer hover:bg-[#1e293b]/50 transition-all duration-300 group"
+>
+  <div className="p-3 bg-slate-900/80 rounded-xl border border-white/5 text-[#ec4899] group-hover:bg-[#ec4899]/10 group-hover:border-[#ec4899]/30 transition-colors">
+    {renderConnectorIcon("graphite", "w-6 h-6")}
+  </div>
+  <div className="flex-1 min-w-0">
+    <div className="flex items-center justify-between mb-1">
+      <h3 className="font-bold text-white group-hover:text-[#ec4899] transition-colors flex items-center gap-1">
+        Graphite
+        <svg className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 translate-x-0 group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+      </h3>
+    </div>
+    <p className="text-xs text-slate-400 leading-relaxed">Time‑series Graphite server.</p>
+  </div>
+</div>
+</div>
         </div>
       )}
 
