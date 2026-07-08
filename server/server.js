@@ -78,6 +78,11 @@ app.use(
   require('./routes/adminRoutes')
 )
 
+app.use(
+  '/api/erp',
+  require('./routes/erpRoutes')
+)
+
 io.on(
   'connection',
   (socket) => {

@@ -57,7 +57,7 @@ const Register = () => {
 
       console.log(error)
 
-      alert('Registration failed')
+      alert(error.response?.data?.message || 'Registration failed')
 
     }
 

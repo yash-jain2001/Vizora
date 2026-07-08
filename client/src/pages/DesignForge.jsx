@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import API from "../api/axios";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import {
   ResponsiveContainer,
@@ -15,7 +16,18 @@ import {
 } from "recharts";
 
 const DesignForge = () => {
-  const [activeTab, setActiveTab] = useState("mission-control");
+  const [loading, setLoading] = useState(true);
+  const [erpData, setErpData] = useState(null);
+  const [showConfig, setShowConfig] = useState(false);
+  const [erpConfig, setErpConfig] = useState({ datasourceId: '' });
+  const [datasources, setDatasources] = useState([]);
+
+    const [jobs, setJobs] = useState([]);
+  const [activeJobDetail, setActiveJobDetail] = useState(null);
+  const [materials, setMaterials] = useState([]);
+  const [batches, setBatches] = useState([]);
+
+const [activeTab, setActiveTab] = useState("mission-control");
 
   // --- BOM CONFIGURATOR STATE & DATA ---
   const [selectedProduct, setSelectedProduct] = useState("classic-chair");
@@ -25,47 +37,36 @@ const DesignForge = () => {
   const [deskSize, setDeskSize] = useState("standard");
   const [sofaFabric, setSofaFabric] = useState("velvet-blue");
 
-  const productsData = {
-    "classic-chair": {
-      name: "Classic Dining Chair",
-      basePrice: 120,
-      woodModifier: { oak: 0, walnut: 45, pine: -15 },
-      finishModifier: { natural: 0, lacquer: 10, dark: 15 },
-      cushionModifier: { leather: 30, fabric: 15, none: 0 },
-      bomBase: [
-        { item: "Timber Frame", baseQty: 4, unit: "bd ft", itemCost: 12 },
-        { item: "Upholstery Padding", baseQty: 1, unit: "sq ft", itemCost: 8 },
-        { item: "Assembly Screws", baseQty: 16, unit: "units", itemCost: 0.15 },
-        { item: "Lacquer/Stain Finish", baseQty: 0.25, unit: "liters", itemCost: 20 }
-      ]
-    },
-    "executive-desk": {
-      name: "Executive Writing Desk",
-      basePrice: 450,
-      woodModifier: { oak: 0, walnut: 120, pine: -50 },
-      finishModifier: { natural: 0, lacquer: 25, dark: 35 },
-      deskSizeModifier: { standard: 0, compact: -40, oversized: 90 },
-      bomBase: [
-        { item: "Timber Desktop Board", baseQty: 18, unit: "bd ft", itemCost: 14 },
-        { item: "Steel Desk Drawer slides", baseQty: 3, unit: "sets", itemCost: 15 },
-        { item: "Heavy Duty Connectors", baseQty: 24, unit: "units", itemCost: 0.4 },
-        { item: "Lacquer/Stain Finish", baseQty: 1.5, unit: "liters", itemCost: 20 }
-      ]
-    },
-    "luxury-sofa": {
-      name: "Luxury Chesterfield Sofa",
-      basePrice: 850,
-      woodModifier: { oak: 0, walnut: 150, pine: -70 },
-      finishModifier: { natural: 0, lacquer: 30, dark: 40 },
-      sofaFabricModifier: { "velvet-blue": 80, "velvet-green": 80, "linen-grey": 30 },
-      bomBase: [
-        { item: "Solid Wood Structure", baseQty: 24, unit: "bd ft", itemCost: 10 },
-        { item: "Premium Coil Springs", baseQty: 32, unit: "units", itemCost: 2.5 },
-        { item: "High-Density Foam Cushioning", baseQty: 4, unit: "rolls", itemCost: 45 },
-        { item: "Brass Upholstery Nails", baseQty: 120, unit: "units", itemCost: 0.1 }
-      ]
-    }
-  };
+    useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [erpRes, dsRes, confRes] = await Promise.all([
+          API.get('/erp/data'),
+          API.get('/datasources'),
+          API.get('/erp/config')
+        ]);
+        setErpData(erpRes.data);
+        setJobs(erpRes.data.jobs);
+        setMaterials(erpRes.data.materials);
+        setBatches(erpRes.data.batches);
+        setDatasources(dsRes.data);
+        setErpConfig(confRes.data);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+  
+  if (loading || !erpData) {
+    return <DashboardLayout><div className="flex items-center justify-center h-screen text-white">Loading ERP Data...</div></DashboardLayout>;
+  }
+
+  const productsData = erpData.productsData;
+  const productionTrendData = erpData.productionTrendData;
+  const OeeDistribution = erpData.OeeDistribution;
 
   const getBOMCost = () => {
     const data = productsData[selectedProduct];
@@ -116,68 +117,8 @@ const DesignForge = () => {
   };
 
   // --- KANBAN SHOP FLOOR STATE & DATA ---
-  const [jobs, setJobs] = useState([
-    {
-      id: "WO-102",
-      name: "Walnut Writing Desk",
-      client: "Aesthetics Interiors",
-      stage: "cutting",
-      qty: 1,
-      priority: "High",
-      spec: "Oversized, Lacquer Polish",
-      checklist: [
-        { id: 1, text: "Check timber moisture content (< 12%)", checked: true },
-        { id: 2, text: "Rip boards to specified dimensions", checked: false },
-        { id: 3, text: "Grain matching for desk surface", checked: false }
-      ]
-    },
-    {
-      id: "WO-103",
-      name: "Classic Oak Chair (Set of 6)",
-      client: "Woodhaven Cafe",
-      stage: "assembly",
-      qty: 6,
-      priority: "Medium",
-      spec: "Natural Polish, Fabric Cushion",
-      checklist: [
-        { id: 1, text: "Dry fit tenon and mortise joints", checked: true },
-        { id: 2, text: "Apply wood glue and clamp for 4 hours", checked: true },
-        { id: 3, text: "Check legs alignment and level seat", checked: false }
-      ]
-    },
-    {
-      id: "WO-104",
-      name: "Royal Blue Velvet Sofa",
-      client: "Apex Hotel Lounge",
-      stage: "finishing",
-      qty: 1,
-      priority: "Critical",
-      spec: "Oversized, Pine Frame, Velvet Blue",
-      checklist: [
-        { id: 1, text: "Inspect wood skeleton joints strength", checked: true },
-        { id: 2, text: "Glue high-density foam padding", checked: true },
-        { id: 3, text: "Align velvet fabric and install tufted buttons", checked: true },
-        { id: 4, text: "Mount brass nail heads evenly", checked: false }
-      ]
-    },
-    {
-      id: "WO-105",
-      name: "Minimalist Pine Bookcase",
-      client: "Private Residence",
-      stage: "dispatch",
-      qty: 2,
-      priority: "Low",
-      spec: "Natural Lacquer Finish",
-      checklist: [
-        { id: 1, text: "Final lacquer sanding and clean", checked: true },
-        { id: 2, text: "Mount backing panels", checked: true },
-        { id: 3, text: "Flat-pack wrapping with protective foam", checked: true }
-      ]
-    }
-  ]);
-
-  const [activeJobDetail, setActiveJobDetail] = useState(null);
-
+  
+  
   const moveJob = (jobId, direction) => {
     const stages = ["cutting", "assembly", "finishing", "dispatch"];
     setJobs(prevJobs =>
@@ -220,22 +161,8 @@ const DesignForge = () => {
   };
 
   // --- INVENTORY & BATCH STATE ---
-  const [materials, setMaterials] = useState([
-    { id: "MAT-OAK", name: "Premium Oak Timber", stock: 380, unit: "bd ft", min: 150, status: "In Stock" },
-    { id: "MAT-WAL", name: "Select Walnut Timber", stock: 240, unit: "bd ft", min: 100, status: "In Stock" },
-    { id: "MAT-PIN", name: "Knotty Pine Timber", stock: 85, unit: "bd ft", min: 150, status: "Low Stock" },
-    { id: "MAT-FOA", name: "High-Density Foam Padding", stock: 8, unit: "rolls", min: 12, status: "Low Stock" },
-    { id: "MAT-VEL", name: "Royal Blue Velvet Fabric", stock: 45, unit: "yards", min: 20, status: "In Stock" },
-    { id: "MAT-SCR", name: "Joint Screws & Fasteners", stock: 1800, unit: "units", min: 500, status: "In Stock" },
-    { id: "MAT-GLU", name: "Titebond Wood Glue", stock: 3, unit: "gallons", min: 5, status: "Low Stock" }
-  ]);
-
-  const [batches, setBatches] = useState([
-    { lotId: "LOT-OK-120", material: "Premium Oak Timber", qty: 200, supplier: "Hardwood Supply Co.", date: "2026-07-01", status: "Received" },
-    { lotId: "LOT-VEL-84", material: "Royal Blue Velvet Fabric", qty: 50, supplier: "Velvet Couture", date: "2026-06-25", status: "Received" },
-    { lotId: "LOT-FO-92", material: "High-Density Foam Padding", qty: 10, supplier: "PolyFoam Corp", date: "2026-07-10", status: "In Transit" }
-  ]);
-
+  
+  
   const restockMaterial = (id) => {
     setMaterials(prev =>
       prev.map(mat => {
@@ -265,22 +192,8 @@ const DesignForge = () => {
   };
 
   // --- CHART DATA ---
-  const productionTrendData = [
-    { name: "Mon", Target: 8, Actual: 7, Waste: 3.2 },
-    { name: "Tue", Target: 8, Actual: 9, Waste: 2.8 },
-    { name: "Wed", Target: 8, Actual: 8, Waste: 2.5 },
-    { name: "Thu", Target: 8, Actual: 6, Waste: 4.1 },
-    { name: "Fri", Target: 10, Actual: 9, Waste: 2.1 },
-    { name: "Sat", Target: 6, Actual: 7, Waste: 1.8 }
-  ];
-
-  const OeeDistribution = [
-    { name: "Cutting Station", value: 92, fill: "#3b82f6" },
-    { name: "Sanding Station", value: 87, fill: "#10b981" },
-    { name: "Assembly Bay", value: 89, fill: "#f59e0b" },
-    { name: "Finishing Room", value: 94, fill: "#ec4899" }
-  ];
-
+  
+  
   return (
     <DashboardLayout>
       {/* HEADER SECTION */}
@@ -290,7 +203,7 @@ const DesignForge = () => {
             DesignForge ERP
           </h1>
           <p className="text-slate-400 font-semibold text-sm">
-            Interiors & Furniture Manufacturing Mission Control
+            Interiors & Furniture Manufacturing Mission Control <span className="ml-2 bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded text-[10px] border border-emerald-500/20">{erpData.source}</span>
           </p>
         </div>
 
@@ -1037,6 +950,66 @@ const DesignForge = () => {
           </div>
         </div>
       )}
+    
+      {showConfig && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-[#0f172a] border border-white/10 p-8 rounded-3xl w-full max-w-lg shadow-2xl">
+            <h2 className="text-xl font-bold text-white mb-6">ERP Settings</h2>
+            
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="text-xs font-bold text-slate-400 block mb-2">Data Source Connection</label>
+                <select 
+                  value={erpConfig?.datasourceId || ''}
+                  onChange={(e) => setErpConfig({...erpConfig, datasourceId: e.target.value})}
+                  className="w-full bg-[#1e293b] border border-white/10 p-3 rounded-xl text-sm text-white"
+                >
+                  <option value="">Mock ERP Data</option>
+                  {datasources.map(ds => (
+                    <option key={ds._id} value={ds._id}>{ds.name} ({ds.type})</option>
+                  ))}
+                </select>
+                <p className="text-[10px] text-slate-500 mt-2">Select a connected database to power the ERP.</p>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-400 block mb-2">Jobs Query</label>
+                <input 
+                  type="text"
+                  placeholder="SELECT * FROM jobs..."
+                  value={erpConfig?.queries?.jobsQuery || ''}
+                  onChange={(e) => setErpConfig({...erpConfig, queries: {...erpConfig.queries, jobsQuery: e.target.value}})}
+                  className="w-full bg-[#1e293b] border border-white/10 p-3 rounded-xl text-sm text-white"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-4 mt-8 justify-end">
+              <button 
+                onClick={() => setShowConfig(false)}
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={async () => {
+                  try {
+                    await API.post('/erp/config', erpConfig);
+                    setShowConfig(false);
+                    window.location.reload();
+                  } catch (e) {
+                    alert('Error saving config');
+                  }
+                }}
+                className="bg-emerald-500 hover:bg-emerald-400 px-5 py-2.5 rounded-xl text-xs font-bold text-slate-950 cursor-pointer"
+              >
+                Save & Restart ERP
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </DashboardLayout>
   );
 };

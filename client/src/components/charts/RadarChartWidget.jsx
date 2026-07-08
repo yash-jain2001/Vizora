@@ -1,3 +1,4 @@
+import useWidgetData from '../../hooks/useWidgetData';
 import {
   ResponsiveContainer,
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import socket from './useSocket';
 
-const useWidgetData = (widget) => {
+const useWidgetData = (widget, initialOption) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,7 +15,6 @@ const useWidgetData = (widget) => {
     const handleLiveData = (newData) => {
       setData((prev) => {
         // We create a generic data point based on the widget's config
-        // In a real production app, this would use API.post('/query', { datasourceId, query: widget.dataset })
         const yValue = widget?.queryKey 
           ? newData[widget.queryKey] 
           : (newData.temperature || Math.floor(Math.random() * 100));
@@ -33,8 +32,6 @@ const useWidgetData = (widget) => {
       setLoading(false);
     };
 
-    // If the widget has a specific refresh interval, we could set up polling here
-    // For now, we subscribe to the global stream and format it generically
     socket.on('live-data', handleLiveData);
     
     return () => {
@@ -42,6 +39,27 @@ const useWidgetData = (widget) => {
     };
   }, [widget?.xAxis, widget?.yAxis, widget?.queryKey]);
 
+  // If initialOption is provided, we are dealing with an ECharts widget
+  // We need to return a populated ECharts option object
+  if (initialOption) {
+    const option = JSON.parse(JSON.stringify(initialOption)); // Deep clone
+    if (option.series && option.series.length > 0) {
+      if (option.series[0].type === 'gauge') {
+         const latestValue = data.length > 0 ? data[data.length - 1][widget?.yAxis || 'value'] : (option.series[0].data?.[0]?.value || 0);
+         option.series[0].data = [{ value: latestValue }];
+      } else {
+         option.series[0].data = data.map(d => d[widget?.yAxis || 'value'] || 0);
+         if (option.xAxis && !Array.isArray(option.xAxis)) {
+            option.xAxis.data = data.map(d => d[widget?.xAxis || 'time']);
+         } else if (option.xAxis && Array.isArray(option.xAxis)) {
+            option.xAxis[0].data = data.map(d => d[widget?.xAxis || 'time']);
+         }
+      }
+    }
+    return option; // Return the option object directly for ECharts!
+  }
+
+  // Otherwise, return { data, loading, error } for Recharts or custom widgets
   return { data, loading, error };
 };
 

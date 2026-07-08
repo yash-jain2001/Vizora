@@ -1,3 +1,4 @@
+import useWidgetData from '../../hooks/useWidgetData';
 import {
   ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip

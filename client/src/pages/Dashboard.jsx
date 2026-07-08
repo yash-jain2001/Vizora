@@ -357,17 +357,16 @@ const Dashboard = () => {
         <div className="flex gap-4 flex-wrap items-center">
           <div className="relative">
             <select
+              value=""
               onChange={(e) => {
                 if (e.target.value) {
                   addWidget(e.target.value);
-                  e.target.value = "";
                 }
               }}
               className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-5 py-3 rounded-xl transition-all duration-200 cursor-pointer text-sm shadow-md outline-none border-r-[12px] border-transparent"
-              defaultValue=""
             >
               <option value="" disabled>+ Add Widget</option>
-                            <option value="line-chart">Line Chart (Live)</option>
+              <option value="line-chart">Line Chart (Live)</option>
               <option value="spline-chart">Spline Chart</option>
               <option value="step-line-chart">Step Line Chart</option>
               <option value="area-chart">Area Chart</option>

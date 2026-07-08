@@ -83,6 +83,18 @@ const DashboardsList = () => {
     }
   };
 
+  const handleDeleteDashboard = async (e, id) => {
+    e.stopPropagation();
+    if (!window.confirm('Are you sure you want to delete this dashboard?')) return;
+    try {
+      await API.delete(`/dashboards/${id}`);
+      setDashboards(dashboards.filter(d => d._id !== id));
+    } catch (error) {
+      console.error('Failed to delete dashboard:', error);
+      alert('Failed to delete dashboard');
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8 select-none">
@@ -119,9 +131,20 @@ const DashboardsList = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
                 </svg>
               </div>
-              <span className="text-xs font-bold text-slate-500 bg-slate-900 px-2 py-1 rounded-lg">
-                {dash.widgets?.length || 0} Widgets
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-500 bg-slate-900 px-2 py-1 rounded-lg">
+                  {dash.widgets?.length || 0} Widgets
+                </span>
+                <button
+                  onClick={(e) => handleDeleteDashboard(e, dash._id)}
+                  className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+                  title="Delete Dashboard"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
             </div>
             <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
               {dash.title}

@@ -5,6 +5,7 @@ const {
   getDashboards,
   getDashboardById,
   updateDashboard,
+  deleteDashboard,
 } = require(
   '../controllers/dashboardCrudController'
 )
@@ -22,5 +23,7 @@ router.get('/', getDashboards)
 router.get('/:id', getDashboardById)
 
 router.put('/:id', updateDashboard)
+
+router.delete('/:id', deleteDashboard)
 
 module.exports = router

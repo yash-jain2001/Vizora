@@ -5,7 +5,7 @@ import useWidgetData from '../../hooks/useWidgetData';
 
 const WaterfallChartWidget = ({ widget }) => {
   const initialOption = { xAxis: { type: 'category', data: ['A','B','C','D'], axisLabel: { color: "#9ca3af" } }, yAxis: { type: 'value', axisLabel: { color: "#9ca3af" }, splitLine: { lineStyle: { color: '#1f293d' } } }, series: [{ type: 'line', step: 'start', data: [120, 132, 101, 134], itemStyle: { color: '#ec4899' } }] };
-  const option = useWidgetData('waterfall-chart', initialOption);
+  const option = useWidgetData(widget, initialOption);
 
   return (
     <div className="w-full h-full flex flex-col pt-3 pb-4 px-4 relative">

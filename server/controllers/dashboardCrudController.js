@@ -122,9 +122,33 @@ const updateDashboard = async (req, res) => {
   }
 }
 
+/* DELETE DASHBOARD */
+const deleteDashboard = async (req, res) => {
+  try {
+    const dashboard = await Dashboard.findByIdAndDelete(req.params.id);
+    if (!dashboard) {
+      return res.status(404).json({ message: 'Dashboard not found' });
+    }
+
+    const logAudit = require('../utils/auditLogger');
+    const deleterName = req.user ? req.user.name : 'System';
+    await logAudit(
+      'WARN',
+      `Dashboard deleted: ${dashboard.title}`,
+      deleterName,
+      req.ip
+    );
+
+    res.json({ message: 'Dashboard deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 module.exports = {
   createDashboard,
   getDashboards,
   getDashboardById,
   updateDashboard,
+  deleteDashboard,
 }
