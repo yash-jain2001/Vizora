@@ -1,9 +1,9 @@
-import React from 'react';
+
 import ReactECharts from 'echarts-for-react';
 import useWidgetData from '../../hooks/useWidgetData';
 
 
-const GaugeChartWidget = ({ title = 'Gauge Chart' }) => {
+const GaugeChartWidget = ({ widget }) => {
   const initialOption = { series: [{ type: 'gauge', progress: { show: true, width: 18 }, axisLine: { lineStyle: { width: 18 } }, splitLine: { length: 15 }, axisLabel: { distance: 25, color: '#999' }, detail: { valueAnimation: true, color: '#fff' }, data: [{ value: 70 }] }] };
   const option = useWidgetData('gauge-chart', initialOption);
 

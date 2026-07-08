@@ -1,9 +1,9 @@
-import React from 'react';
+
 import ReactECharts from 'echarts-for-react';
 import useWidgetData from '../../hooks/useWidgetData';
 
 
-const NetworkGraphWidget = ({ title = 'Network Graph' }) => {
+const NetworkGraphWidget = ({ widget }) => {
   const initialOption = { series: [{ type: 'graph', layout: 'force', symbolSize: 30, roam: true, label: { show: true, color: '#fff' }, force: { repulsion: 200 }, edgeSymbol: ['circle', 'arrow'], edgeSymbolSize: [4, 10], data: [{ name: 'Node 1' }, { name: 'Node 2' }, { name: 'Node 3' }], links: [{ source: 'Node 1', target: 'Node 2' }, { source: 'Node 2', target: 'Node 3' }], lineStyle: { color: '#8b5cf6', width: 2, curveness: 0.2 } }] };
   const option = useWidgetData('network-graph', initialOption);
 

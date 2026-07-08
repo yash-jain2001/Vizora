@@ -7,23 +7,11 @@ import WidgetContainer from '../widgets/WidgetContainer'
 import { useEffect, useState } from 'react'
 import API from '../../api/axios'
 
-const TreemapWidget = ({ title = 'Treemap' }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await API.get('/dashboard/treemap')
-        setData(res.data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchData()
-  }, [])
+const TreemapWidget = ({ widget }) => {
+  const { data } = useWidgetData(widget)
 
   return (
-    <WidgetContainer title={title}>
+    <WidgetContainer title={widget?.title || 'Widget'}>
       <ResponsiveContainer width='100%' height='100%'>
 
         <Treemap width={400} height={200} data={data} dataKey="size" stroke="#fff" fill="#8884d8">

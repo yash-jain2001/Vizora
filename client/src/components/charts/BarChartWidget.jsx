@@ -13,29 +13,14 @@ import WidgetContainer from '../widgets/WidgetContainer'
 import { useEffect, useState } from 'react'
 
 import API from '../../api/axios'
-import socket from '../../hooks/useSocket'
+import useWidgetData from '../../hooks/useWidgetData';
 
-const BarChartWidget = () => {
+const BarChartWidget = ({ widget }) => {
 
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-
-        const res = await API.get('/dashboard/bar-chart')
-
-        setData(res.data)
-
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchData()
-  }, [])
+  const { data } = useWidgetData(widget)
 
   return (
-    <WidgetContainer title='Weekly Usage'>
+    <WidgetContainer title={widget?.title || 'Weekly Usage'}>
 
       <ResponsiveContainer width='100%' height="100%">
 

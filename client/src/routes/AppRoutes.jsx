@@ -10,10 +10,12 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 
 import Dashboard from "../pages/Dashboard";
+import DashboardsList from "../pages/DashboardsList";
 import Datasources from "../pages/Datasources";
 import Alerts from "../pages/Alert";
 import Analytics from "../pages/Analytics";
 import Admin from "../pages/Admin";
+import DesignForge from "../pages/DesignForge";
 
 import ProtectedRoute from "./ProtectedRoute";
 import RoleRoute from "./RoleRoute";
@@ -44,7 +46,25 @@ const AppRoutes = () => {
           path="/dashboard"
           element={
             <ProtectedRoute>
+              <DashboardsList />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/:id"
+          element={
+            <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/designforge"
+          element={
+            <ProtectedRoute>
+              <DesignForge />
             </ProtectedRoute>
           }
         />

@@ -92,7 +92,7 @@ const HistoricalTemperatureChart = ({
             <CartesianGrid strokeDasharray="3 3" stroke="#1f293d" vertical={false} />
 
             <XAxis
-              dataKey="time"
+              dataKey={widget?.xAxis || 'time'}
               stroke="#4b5563"
               tick={{ fill: "#9ca3af", fontSize: 11 }}
               axisLine={false}
@@ -159,7 +159,7 @@ const HistoricalTemperatureChart = ({
 
             <Area
               type="monotone"
-              dataKey="value"
+              dataKey={widget?.yAxis || 'value'}
               stroke="#10b981"
               strokeWidth={3}
               fillOpacity={1}

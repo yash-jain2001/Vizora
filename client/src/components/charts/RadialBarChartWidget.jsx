@@ -7,23 +7,11 @@ import WidgetContainer from '../widgets/WidgetContainer'
 import { useEffect, useState } from 'react'
 import API from '../../api/axios'
 
-const RadialBarChartWidget = ({ title = 'Radial Bar Chart' }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await API.get('/dashboard/radial-bar-chart')
-        setData(res.data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchData()
-  }, [])
+const RadialBarChartWidget = ({ widget }) => {
+  const { data } = useWidgetData(widget)
 
   return (
-    <WidgetContainer title={title}>
+    <WidgetContainer title={widget?.title || 'Widget'}>
       <ResponsiveContainer width='100%' height='100%'>
 
         <RadialBarChart cx="50%" cy="50%" innerRadius="10%" outerRadius="80%" barSize={10} data={data}>

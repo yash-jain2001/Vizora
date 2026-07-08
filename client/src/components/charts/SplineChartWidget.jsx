@@ -1,9 +1,9 @@
-import React from 'react';
+
 import ReactECharts from 'echarts-for-react';
 import useWidgetData from '../../hooks/useWidgetData';
 
 
-const SplineChartWidget = ({ title = 'Spline Chart' }) => {
+const SplineChartWidget = ({ widget }) => {
   const initialOption = { xAxis: { type: 'category', data: ['M','T','W','T','F','S','S'], axisLabel: { color: "#9ca3af" } }, yAxis: { type: 'value', axisLabel: { color: "#9ca3af" }, splitLine: { lineStyle: { color: '#1f293d' } } }, series: [{ data: [820, 932, 901, 934, 1290, 1330, 1320], type: 'line', smooth: true, itemStyle: { color: '#3b82f6' } }] };
   const option = useWidgetData('spline-chart', initialOption);
 

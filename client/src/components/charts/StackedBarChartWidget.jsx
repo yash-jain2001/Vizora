@@ -7,23 +7,11 @@ import WidgetContainer from '../widgets/WidgetContainer'
 import { useEffect, useState } from 'react'
 import API from '../../api/axios'
 
-const StackedBarChartWidget = ({ title = 'Stacked Bar Chart' }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await API.get('/dashboard/stacked-bar-chart')
-        setData(res.data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchData()
-  }, [])
+const StackedBarChartWidget = ({ widget }) => {
+  const { data } = useWidgetData(widget)
 
   return (
-    <WidgetContainer title={title}>
+    <WidgetContainer title={widget?.title || 'Widget'}>
       <ResponsiveContainer width='100%' height='100%'>
 
         <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>

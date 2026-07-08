@@ -1,4 +1,4 @@
-import React from 'react';
+
 import ReactECharts from 'echarts-for-react';
 import useWidgetData from '../../hooks/useWidgetData';
 

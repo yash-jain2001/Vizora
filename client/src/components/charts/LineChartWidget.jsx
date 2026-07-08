@@ -12,39 +12,14 @@ import WidgetContainer from '../widgets/WidgetContainer'
 
 import { useEffect, useState } from 'react'
 
-import socket from '../../hooks/useSocket'
+import useWidgetData from '../../hooks/useWidgetData';
 
-const LineChartWidget = () => {
+const LineChartWidget = ({ widget }) => {
 
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-
-    socket.on('live-data', (newData) => {
-
-      setData((prev) => {
-
-        const updated = [
-          ...prev,
-          {
-            time: newData.time,
-            value: newData.temperature,
-          },
-        ]
-
-        return updated.slice(-10)
-      })
-
-    })
-
-    return () => {
-      socket.off('live-data')
-    }
-
-  }, [])
+  const { data } = useWidgetData(widget)
 
   return (
-    <WidgetContainer title='Live Temperature Feed'>
+    <WidgetContainer title={widget?.title || 'Live Temperature Feed'}>
 
       <ResponsiveContainer width='100%' height="100%">
 
@@ -59,7 +34,7 @@ const LineChartWidget = () => {
           <CartesianGrid strokeDasharray="3 3" stroke="#1f293d" vertical={false} />
 
           <XAxis 
-            dataKey='time' 
+            dataKey={widget?.xAxis || 'time'} 
             stroke='#4b5563' 
             tick={{ fill: '#9ca3af', fontSize: 11 }}
             axisLine={false}
@@ -88,7 +63,7 @@ const LineChartWidget = () => {
 
           <Area
             type='monotone'
-            dataKey='value'
+            dataKey={widget?.yAxis || 'value'}
             stroke='#10b981'
             strokeWidth={3}
             fillOpacity={1}

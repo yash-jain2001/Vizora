@@ -48,6 +48,26 @@ const dashboardSchema = new mongoose.Schema(
           type: String,
           default: 'value',
         },
+
+        dataset: {
+          type: String,
+        },
+
+        xAxis: {
+          type: String,
+        },
+
+        yAxis: {
+          type: String,
+        },
+
+        filters: {
+          type: mongoose.Schema.Types.Mixed,
+        },
+
+        refreshInterval: {
+          type: Number,
+        },
       },
     ],
 

@@ -1,9 +1,9 @@
-import React from 'react';
+
 import ReactECharts from 'echarts-for-react';
 import useWidgetData from '../../hooks/useWidgetData';
 
 
-const SankeyDiagramWidget = ({ title = 'Sankey Diagram' }) => {
+const SankeyDiagramWidget = ({ widget }) => {
   const initialOption = { series: { type: 'sankey', layout: 'none', lineStyle: { color: 'gradient', curveness: 0.5 }, data: [{name: 'Sensor A'}, {name: 'Gateway 1'}, {name: 'Cloud'}], links: [{source: 'Sensor A', target: 'Gateway 1', value: 5}, {source: 'Gateway 1', target: 'Cloud', value: 8}], label: { color: '#fff' } } };
   const option = useWidgetData('sankey-diagram', initialOption);
 

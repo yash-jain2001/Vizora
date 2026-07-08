@@ -7,23 +7,11 @@ import WidgetContainer from '../widgets/WidgetContainer'
 import { useEffect, useState } from 'react'
 import API from '../../api/axios'
 
-const RadarChartWidget = ({ title = 'Radar Chart' }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await API.get('/dashboard/radar-chart')
-        setData(res.data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchData()
-  }, [])
+const RadarChartWidget = ({ widget }) => {
+  const { data } = useWidgetData(widget)
 
   return (
-    <WidgetContainer title={title}>
+    <WidgetContainer title={widget?.title || 'Widget'}>
       <ResponsiveContainer width='100%' height='100%'>
 
         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>

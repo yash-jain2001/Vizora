@@ -44,7 +44,7 @@ import CandlestickChartWidget from "../components/charts/CandlestickChartWidget"
 import OhlcChartWidget from "../components/charts/OhlcChartWidget";
 import GeoMapWidget from "../components/charts/GeoMapWidget";
 import ChoroplethMapWidget from "../components/charts/ChoroplethMapWidget";
-import HeatMapWidget from "../components/charts/HeatMapWidget";
+import HeatMapWidget from "../components/charts/HeatmapWidget";
 import ClusterMapWidget from "../components/charts/ClusterMapWidget";
 import RouteTrackingMapWidget from "../components/charts/RouteTrackingMapWidget";
 import TimelineChartWidget from "../components/charts/TimelineChartWidget";
@@ -103,25 +103,32 @@ import QueryResultsExplorerWidget from "../components/charts/QueryResultsExplore
 import InteractiveFilterPanelWidget from "../components/charts/InteractiveFilterPanelWidget";
 import DashboardNavigatorWidgetWidget from "../components/charts/DashboardNavigatorWidgetWidget";
 
-import StatsCard from "../components/widgets/StatsCard";
-import DashboardSwitcher from "../components/widgets/DashboardSwitcher";
 import { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axios";
-import socket from "../hooks/useSocket";
 
 const Dashboard = () => {
-  const [stats, setStats] = useState({});
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [dashboardTitle, setDashboardTitle] = useState('Loading...');
   const [widgets, setWidgets] = useState([]);
-  const [dashboards, setDashboards] = useState([]);
-  const [selectedDashboard, setSelectedDashboard] = useState('');
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(true);
   const containerRef = useRef(null);
 
   // Widget configuration states
   const [datasources, setDatasources] = useState([]);
   const [isConfigModalOpen, setIsConfigModalOpen] = useState(false);
   const [activeWidgetIndex, setActiveWidgetIndex] = useState(null);
-  const [widgetForm, setWidgetForm] = useState({ title: '', datasourceId: '', queryKey: 'value' });
+  const [widgetForm, setWidgetForm] = useState({ 
+    title: '', 
+    datasourceId: '', 
+    queryKey: 'value',
+    dataset: '',
+    xAxis: '',
+    yAxis: '',
+    filters: '',
+    refreshInterval: 0
+  });
 
   /* FETCH DATASOURCES FOR WIDGETS */
   useEffect(() => {
@@ -136,57 +143,13 @@ const Dashboard = () => {
     fetchDatasources();
   }, []);
 
-  /* FETCH STATS */
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await API.get('/dashboard/stats');
-        setStats(res.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchStats();
-  }, []);
-
-  /* LIVE SOCKET DATA */
-  useEffect(() => {
-    socket.on('live-data', (liveData) => {
-      setStats((prev) => ({
-        ...prev,
-        temperature: liveData.temperature,
-        energyUsage: liveData.energy,
-      }));
-    });
-
-    return () => {
-      socket.off('live-data');
-    };
-  }, []);
-
-  /* FETCH DASHBOARDS */
-  const fetchDashboards = async () => {
-    try {
-      const res = await API.get('/dashboards');
-      setDashboards(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchDashboards();
-  }, []);
-
   /* LOAD DASHBOARD */
   useEffect(() => {
     const loadDashboard = async () => {
-      if (!selectedDashboard) {
-        setWidgets([]);
-        return;
-      }
+      if (!id) return;
       try {
-        const res = await API.get(`/dashboards/${selectedDashboard}`);
+        const res = await API.get(`/dashboards/${id}`);
+        setDashboardTitle(res.data.title);
         const loadedWidgets = res.data.widgets.map((w, idx) => ({
           ...w,
           x: typeof w.x === 'number' ? w.x : (idx * 6) % 12,
@@ -200,7 +163,7 @@ const Dashboard = () => {
       }
     };
     loadDashboard();
-  }, [selectedDashboard]);
+  }, [id]);
 
   /* ADD WIDGET */
   const addWidget = (type) => {
@@ -214,10 +177,12 @@ const Dashboard = () => {
       h: 4,
       datasourceId: '',
       queryKey: 'value',
+      dataset: '',
+      xAxis: '',
+      yAxis: '',
+      filters: '',
+      refreshInterval: 0
     };
-    if (type === 'line-chart') newWidget.title = 'Live Data Feed';
-    if (type === 'bar-chart') newWidget.title = 'Weekly Ingestion';
-
     setWidgets([...widgets, newWidget]);
   };
 
@@ -227,7 +192,12 @@ const Dashboard = () => {
     setWidgetForm({
       title: widget.title || '',
       datasourceId: widget.datasourceId || '',
-      queryKey: widget.queryKey || 'value'
+      queryKey: widget.queryKey || 'value',
+      dataset: widget.dataset || '',
+      xAxis: widget.xAxis || '',
+      yAxis: widget.yAxis || '',
+      filters: widget.filters || '',
+      refreshInterval: widget.refreshInterval || 0
     });
     setIsConfigModalOpen(true);
   };
@@ -242,6 +212,11 @@ const Dashboard = () => {
         title: widgetForm.title,
         datasourceId: widgetForm.datasourceId,
         queryKey: widgetForm.queryKey,
+        dataset: widgetForm.dataset,
+        xAxis: widgetForm.xAxis,
+        yAxis: widgetForm.yAxis,
+        filters: widgetForm.filters,
+        refreshInterval: widgetForm.refreshInterval
       };
       return updated;
     });
@@ -257,32 +232,12 @@ const Dashboard = () => {
 
   /* SAVE DASHBOARD */
   const saveDashboard = async () => {
-    if (widgets.length === 0) {
-      alert('Cannot save an empty dashboard. Please add widgets first.');
-      return;
-    }
-
     try {
-      if (selectedDashboard) {
-        // Find existing dashboard details
-        const activeDash = dashboards.find((d) => d._id === selectedDashboard);
-        const title = activeDash ? activeDash.title : `Dashboard ${Date.now()}`;
-        
-        await API.put(`/dashboards/${selectedDashboard}`, {
-          title,
-          widgets,
-        });
-        alert('Dashboard layout updated successfully!');
-      } else {
-        const title = prompt('Enter a title for your new dashboard:') || `Dashboard ${Date.now()}`;
-        const res = await API.post('/dashboards', {
-          title,
-          widgets,
-        });
-        setSelectedDashboard(res.data._id);
-        alert('New dashboard saved successfully!');
-      }
-      fetchDashboards();
+      await API.put(`/dashboards/${id}`, {
+        title: dashboardTitle,
+        widgets,
+      });
+      alert('Dashboard saved successfully!');
     } catch (error) {
       console.log(error);
       alert('Failed to save dashboard.');
@@ -379,23 +334,27 @@ const Dashboard = () => {
     <DashboardLayout>
       {/* HEADER */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
-        <div>
-          <h1 className="text-4xl font-bold text-white mb-2">
-            IoT Monitoring Dashboard
-          </h1>
-          <p className="text-gray-400">
-            Real-time analytics and monitoring
-          </p>
+        <div className="flex-1 flex items-center gap-4">
+          <button 
+            onClick={() => navigate('/dashboards')}
+            className="p-2 bg-slate-900 border border-white/5 rounded-xl hover:bg-slate-800 transition-colors text-slate-400"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+          </button>
+          
+          <input
+            type="text"
+            value={dashboardTitle}
+            onChange={(e) => setDashboardTitle(e.target.value)}
+            className="text-3xl lg:text-4xl font-bold text-white bg-transparent outline-none border-b-2 border-transparent hover:border-white/10 focus:border-emerald-500 transition-colors py-1 w-full max-w-md placeholder-slate-500"
+            placeholder="Dashboard Title..."
+          />
         </div>
 
         {/* ACTIONS */}
         <div className="flex gap-4 flex-wrap items-center">
-          <DashboardSwitcher
-            dashboards={dashboards}
-            selectedDashboard={selectedDashboard}
-            setSelectedDashboard={setSelectedDashboard}
-          />
-
           <div className="relative">
             <select
               onChange={(e) => {
@@ -540,30 +499,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* STATS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 select-none">
-        <StatsCard
-          title="Active Devices"
-          value={stats.activeDevices}
-          color="#10b981"
-        />
-        <StatsCard
-          title="Temperature"
-          value={`${stats.temperature || 0}°C`}
-          color="#3b82f6"
-        />
-        <StatsCard
-          title="Energy Usage"
-          value={`${stats.energyUsage || 0}%`}
-          color="#f59e0b"
-        />
-        <StatsCard
-          title="Alerts"
-          value={stats.alerts}
-          color="#ef4444"
-        />
-      </div>
-
       {/* WIDGETS CANVAS */}
       <div
         ref={containerRef}
@@ -636,109 +571,109 @@ const Dashboard = () => {
             </button>
 
             <div className="w-full h-full flex-1">
-                            {widget.type === "line-chart" && <LineChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "spline-chart" && <SplineChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "step-line-chart" && <StepLineChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "area-chart" && <AreaChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "stacked-area-chart" && <StackedAreaChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "stream-graph" && <StreamGraphWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "bar-chart" && <BarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "stacked-bar-chart" && <StackedBarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "horizontal-bar-chart" && <HorizontalBarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "grouped-bar-chart" && <GroupedBarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "biaxial-bar-chart" && <BiaxialBarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "biaxial-line-chart" && <BiaxialLineChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "composed-chart" && <ComposedChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "pie-chart" && <PieChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "donut-chart" && <DonutChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "radial-bar-chart" && <RadialBarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "gauge-chart" && <GaugeChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "linear-gauge" && <LinearGaugeWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "progress-bar" && <ProgressBarWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "bullet-chart" && <BulletChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "kpi-card" && <KpiCardWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "sparkline" && <SparklineWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "scatter-chart" && <ScatterChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "bubble-chart" && <BubbleChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "histogram" && <HistogramWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "box-plot" && <BoxPlotWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "violin-plot" && <ViolinPlotWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "density-plot" && <DensityPlotWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "pareto-chart" && <ParetoChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "radar-chart" && <RadarChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "heatmap" && <HeatmapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "calendar-heatmap" && <CalendarHeatmapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "treemap" && <TreemapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "sunburst-chart" && <SunburstChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "sankey-diagram" && <SankeyDiagramWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "chord-diagram" && <ChordDiagramWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "funnel-chart" && <FunnelChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "waterfall-chart" && <WaterfallChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "network-graph" && <NetworkGraphWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "force-directed-graph" && <ForceDirectedGraphWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "parallel-coordinates-plot" && <ParallelCoordinatesPlotWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "candlestick-chart" && <CandlestickChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "ohlc-chart" && <OhlcChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "geo-map" && <GeoMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "choropleth-map" && <ChoroplethMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "heat-map" && <HeatMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "cluster-map" && <ClusterMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "route-tracking-map" && <RouteTrackingMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "timeline-chart" && <TimelineChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "event-timeline" && <EventTimelineWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "gantt-chart" && <GanttChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "schedule-timeline" && <ScheduleTimelineWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "pivot-table" && <PivotTableWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "data-table" && <DataTableWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "drilldown-table" && <DrilldownTableWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "correlation-matrix" && <CorrelationMatrixWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "control-chart" && <ControlChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "anomaly-detection-chart" && <AnomalyDetectionChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "forecast-chart" && <ForecastChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "digital-twin-widget" && <DigitalTwinWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "device-status-grid" && <DeviceStatusGridWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "alarmevent-panel" && <AlarmeventPanelWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "floor-plan-visualization" && <FloorPlanVisualizationWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "asset-tracking-widget" && <AssetTrackingWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "tank-level-visualization" && <TankLevelVisualizationWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "battery-health-widget" && <BatteryHealthWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "sensor-telemetry-widget" && <SensorTelemetryWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "process-flow-diagram" && <ProcessFlowDiagramWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "oee-dashboard-widget" && <OeeDashboardWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "realtime-log-viewer" && <RealtimeLogViewerWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "topn-ranking-chart" && <TopnRankingChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "word-cloud" && <WordCloudWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "cohort-analysis-chart" && <CohortAnalysisChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "retention-curve" && <RetentionCurveWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "tree-graph" && <TreeGraphWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "dependency-graph" && <DependencyGraphWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "resource-utilization-chart" && <ResourceUtilizationChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "capacity-planning-chart" && <CapacityPlanningChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "availabilityuptime-chart" && <AvailabilityuptimeChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "sla-compliance-chart" && <SlaComplianceChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "multiseries-live-monitoring-chart" && <MultiseriesLiveMonitoringChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "status-timeline" && <StatusTimelineWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "swimlane-chart" && <SwimlaneChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "kanban-widget" && <KanbanWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "calendar-view" && <CalendarViewWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "metric-comparison-widget" && <MetricComparisonWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "goal-vs-actual-widget" && <GoalVsActualWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "benchmark-comparison-chart" && <BenchmarkComparisonChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "risk-matrix" && <RiskMatrixWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "geographic-density-map" && <GeographicDensityMapWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "hexbin-chart" && <HexbinChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "mosaic-chart" && <MosaicChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "pyramid-chart" && <PyramidChartWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "population-pyramid" && <PopulationPyramidWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "circular-progress-widget" && <CircularProgressWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "scorecard-widget" && <ScorecardWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "executive-summary-widget" && <ExecutiveSummaryWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "ai-insights-widget" && <AiInsightsWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "root-cause-analysis-widget" && <RootCauseAnalysisWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "predictive-maintenance-widget" && <PredictiveMaintenanceWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "query-results-explorer" && <QueryResultsExplorerWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "interactive-filter-panel" && <InteractiveFilterPanelWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
-              {widget.type === "dashboard-navigator-widget" && <DashboardNavigatorWidgetWidget title={widget.title} datasourceId={widget.datasourceId} queryKey={widget.queryKey} />}
+                            {widget.type === "line-chart" && <LineChartWidget widget={widget} />}
+              {widget.type === "spline-chart" && <SplineChartWidget widget={widget} />}
+              {widget.type === "step-line-chart" && <StepLineChartWidget widget={widget} />}
+              {widget.type === "area-chart" && <AreaChartWidget widget={widget} />}
+              {widget.type === "stacked-area-chart" && <StackedAreaChartWidget widget={widget} />}
+              {widget.type === "stream-graph" && <StreamGraphWidget widget={widget} />}
+              {widget.type === "bar-chart" && <BarChartWidget widget={widget} />}
+              {widget.type === "stacked-bar-chart" && <StackedBarChartWidget widget={widget} />}
+              {widget.type === "horizontal-bar-chart" && <HorizontalBarChartWidget widget={widget} />}
+              {widget.type === "grouped-bar-chart" && <GroupedBarChartWidget widget={widget} />}
+              {widget.type === "biaxial-bar-chart" && <BiaxialBarChartWidget widget={widget} />}
+              {widget.type === "biaxial-line-chart" && <BiaxialLineChartWidget widget={widget} />}
+              {widget.type === "composed-chart" && <ComposedChartWidget widget={widget} />}
+              {widget.type === "pie-chart" && <PieChartWidget widget={widget} />}
+              {widget.type === "donut-chart" && <DonutChartWidget widget={widget} />}
+              {widget.type === "radial-bar-chart" && <RadialBarChartWidget widget={widget} />}
+              {widget.type === "gauge-chart" && <GaugeChartWidget widget={widget} />}
+              {widget.type === "linear-gauge" && <LinearGaugeWidget widget={widget} />}
+              {widget.type === "progress-bar" && <ProgressBarWidget widget={widget} />}
+              {widget.type === "bullet-chart" && <BulletChartWidget widget={widget} />}
+              {widget.type === "kpi-card" && <KpiCardWidget widget={widget} />}
+              {widget.type === "sparkline" && <SparklineWidget widget={widget} />}
+              {widget.type === "scatter-chart" && <ScatterChartWidget widget={widget} />}
+              {widget.type === "bubble-chart" && <BubbleChartWidget widget={widget} />}
+              {widget.type === "histogram" && <HistogramWidget widget={widget} />}
+              {widget.type === "box-plot" && <BoxPlotWidget widget={widget} />}
+              {widget.type === "violin-plot" && <ViolinPlotWidget widget={widget} />}
+              {widget.type === "density-plot" && <DensityPlotWidget widget={widget} />}
+              {widget.type === "pareto-chart" && <ParetoChartWidget widget={widget} />}
+              {widget.type === "radar-chart" && <RadarChartWidget widget={widget} />}
+              {widget.type === "heatmap" && <HeatmapWidget widget={widget} />}
+              {widget.type === "calendar-heatmap" && <CalendarHeatmapWidget widget={widget} />}
+              {widget.type === "treemap" && <TreemapWidget widget={widget} />}
+              {widget.type === "sunburst-chart" && <SunburstChartWidget widget={widget} />}
+              {widget.type === "sankey-diagram" && <SankeyDiagramWidget widget={widget} />}
+              {widget.type === "chord-diagram" && <ChordDiagramWidget widget={widget} />}
+              {widget.type === "funnel-chart" && <FunnelChartWidget widget={widget} />}
+              {widget.type === "waterfall-chart" && <WaterfallChartWidget widget={widget} />}
+              {widget.type === "network-graph" && <NetworkGraphWidget widget={widget} />}
+              {widget.type === "force-directed-graph" && <ForceDirectedGraphWidget widget={widget} />}
+              {widget.type === "parallel-coordinates-plot" && <ParallelCoordinatesPlotWidget widget={widget} />}
+              {widget.type === "candlestick-chart" && <CandlestickChartWidget widget={widget} />}
+              {widget.type === "ohlc-chart" && <OhlcChartWidget widget={widget} />}
+              {widget.type === "geo-map" && <GeoMapWidget widget={widget} />}
+              {widget.type === "choropleth-map" && <ChoroplethMapWidget widget={widget} />}
+              {widget.type === "heat-map" && <HeatMapWidget widget={widget} />}
+              {widget.type === "cluster-map" && <ClusterMapWidget widget={widget} />}
+              {widget.type === "route-tracking-map" && <RouteTrackingMapWidget widget={widget} />}
+              {widget.type === "timeline-chart" && <TimelineChartWidget widget={widget} />}
+              {widget.type === "event-timeline" && <EventTimelineWidget widget={widget} />}
+              {widget.type === "gantt-chart" && <GanttChartWidget widget={widget} />}
+              {widget.type === "schedule-timeline" && <ScheduleTimelineWidget widget={widget} />}
+              {widget.type === "pivot-table" && <PivotTableWidget widget={widget} />}
+              {widget.type === "data-table" && <DataTableWidget widget={widget} />}
+              {widget.type === "drilldown-table" && <DrilldownTableWidget widget={widget} />}
+              {widget.type === "correlation-matrix" && <CorrelationMatrixWidget widget={widget} />}
+              {widget.type === "control-chart" && <ControlChartWidget widget={widget} />}
+              {widget.type === "anomaly-detection-chart" && <AnomalyDetectionChartWidget widget={widget} />}
+              {widget.type === "forecast-chart" && <ForecastChartWidget widget={widget} />}
+              {widget.type === "digital-twin-widget" && <DigitalTwinWidgetWidget widget={widget} />}
+              {widget.type === "device-status-grid" && <DeviceStatusGridWidget widget={widget} />}
+              {widget.type === "alarmevent-panel" && <AlarmeventPanelWidget widget={widget} />}
+              {widget.type === "floor-plan-visualization" && <FloorPlanVisualizationWidget widget={widget} />}
+              {widget.type === "asset-tracking-widget" && <AssetTrackingWidgetWidget widget={widget} />}
+              {widget.type === "tank-level-visualization" && <TankLevelVisualizationWidget widget={widget} />}
+              {widget.type === "battery-health-widget" && <BatteryHealthWidgetWidget widget={widget} />}
+              {widget.type === "sensor-telemetry-widget" && <SensorTelemetryWidgetWidget widget={widget} />}
+              {widget.type === "process-flow-diagram" && <ProcessFlowDiagramWidget widget={widget} />}
+              {widget.type === "oee-dashboard-widget" && <OeeDashboardWidgetWidget widget={widget} />}
+              {widget.type === "realtime-log-viewer" && <RealtimeLogViewerWidget widget={widget} />}
+              {widget.type === "topn-ranking-chart" && <TopnRankingChartWidget widget={widget} />}
+              {widget.type === "word-cloud" && <WordCloudWidget widget={widget} />}
+              {widget.type === "cohort-analysis-chart" && <CohortAnalysisChartWidget widget={widget} />}
+              {widget.type === "retention-curve" && <RetentionCurveWidget widget={widget} />}
+              {widget.type === "tree-graph" && <TreeGraphWidget widget={widget} />}
+              {widget.type === "dependency-graph" && <DependencyGraphWidget widget={widget} />}
+              {widget.type === "resource-utilization-chart" && <ResourceUtilizationChartWidget widget={widget} />}
+              {widget.type === "capacity-planning-chart" && <CapacityPlanningChartWidget widget={widget} />}
+              {widget.type === "availabilityuptime-chart" && <AvailabilityuptimeChartWidget widget={widget} />}
+              {widget.type === "sla-compliance-chart" && <SlaComplianceChartWidget widget={widget} />}
+              {widget.type === "multiseries-live-monitoring-chart" && <MultiseriesLiveMonitoringChartWidget widget={widget} />}
+              {widget.type === "status-timeline" && <StatusTimelineWidget widget={widget} />}
+              {widget.type === "swimlane-chart" && <SwimlaneChartWidget widget={widget} />}
+              {widget.type === "kanban-widget" && <KanbanWidgetWidget widget={widget} />}
+              {widget.type === "calendar-view" && <CalendarViewWidget widget={widget} />}
+              {widget.type === "metric-comparison-widget" && <MetricComparisonWidgetWidget widget={widget} />}
+              {widget.type === "goal-vs-actual-widget" && <GoalVsActualWidgetWidget widget={widget} />}
+              {widget.type === "benchmark-comparison-chart" && <BenchmarkComparisonChartWidget widget={widget} />}
+              {widget.type === "risk-matrix" && <RiskMatrixWidget widget={widget} />}
+              {widget.type === "geographic-density-map" && <GeographicDensityMapWidget widget={widget} />}
+              {widget.type === "hexbin-chart" && <HexbinChartWidget widget={widget} />}
+              {widget.type === "mosaic-chart" && <MosaicChartWidget widget={widget} />}
+              {widget.type === "pyramid-chart" && <PyramidChartWidget widget={widget} />}
+              {widget.type === "population-pyramid" && <PopulationPyramidWidget widget={widget} />}
+              {widget.type === "circular-progress-widget" && <CircularProgressWidgetWidget widget={widget} />}
+              {widget.type === "scorecard-widget" && <ScorecardWidgetWidget widget={widget} />}
+              {widget.type === "executive-summary-widget" && <ExecutiveSummaryWidgetWidget widget={widget} />}
+              {widget.type === "ai-insights-widget" && <AiInsightsWidgetWidget widget={widget} />}
+              {widget.type === "root-cause-analysis-widget" && <RootCauseAnalysisWidgetWidget widget={widget} />}
+              {widget.type === "predictive-maintenance-widget" && <PredictiveMaintenanceWidgetWidget widget={widget} />}
+              {widget.type === "query-results-explorer" && <QueryResultsExplorerWidget widget={widget} />}
+              {widget.type === "interactive-filter-panel" && <InteractiveFilterPanelWidget widget={widget} />}
+              {widget.type === "dashboard-navigator-widget" && <DashboardNavigatorWidgetWidget widget={widget} />}
             </div>
 
             {/* RESIZE HANDLE */}
@@ -759,7 +694,7 @@ const Dashboard = () => {
       {/* WIDGET CONFIGURATION MODAL */}
       {isConfigModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 animate-fade-in p-4">
-          <div className="bg-brand-card border border-brand-border rounded-3xl w-full max-w-md p-8 shadow-2xl relative animate-scale-up">
+          <div className="bg-brand-card border border-brand-border rounded-3xl w-full max-w-md p-8 shadow-2xl relative animate-scale-up max-h-[85vh] overflow-y-auto">
             <button
               onClick={() => setIsConfigModalOpen(false)}
               className="absolute top-6 right-6 text-slate-400 hover:text-white cursor-pointer"
@@ -812,6 +747,60 @@ const Dashboard = () => {
                 />
               </div>
 
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Dataset / Query</label>
+                <input
+                  type="text"
+                  value={widgetForm.dataset}
+                  onChange={(e) => setWidgetForm({ ...widgetForm, dataset: e.target.value })}
+                  placeholder="e.g. SELECT * FROM metrics"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 text-white text-sm font-semibold outline-none focus:border-emerald-500/50"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">X-Axis Field</label>
+                <input
+                  type="text"
+                  value={widgetForm.xAxis}
+                  onChange={(e) => setWidgetForm({ ...widgetForm, xAxis: e.target.value })}
+                  placeholder="e.g. timestamp"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 text-white text-sm font-semibold outline-none focus:border-emerald-500/50"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Y-Axis Field</label>
+                <input
+                  type="text"
+                  value={widgetForm.yAxis}
+                  onChange={(e) => setWidgetForm({ ...widgetForm, yAxis: e.target.value })}
+                  placeholder="e.g. value"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 text-white text-sm font-semibold outline-none focus:border-emerald-500/50"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Filters (JSON)</label>
+                <input
+                  type="text"
+                  value={widgetForm.filters}
+                  onChange={(e) => setWidgetForm({ ...widgetForm, filters: e.target.value })}
+                  placeholder='e.g. {"status": "active"}'
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 text-white text-sm font-semibold outline-none focus:border-emerald-500/50"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Refresh Interval (ms)</label>
+                <input
+                  type="number"
+                  value={widgetForm.refreshInterval}
+                  onChange={(e) => setWidgetForm({ ...widgetForm, refreshInterval: Number(e.target.value) })}
+                  placeholder="e.g. 5000"
+                  className="px-4 py-3 rounded-xl bg-slate-950/40 border border-white/5 text-white text-sm font-semibold outline-none focus:border-emerald-500/50"
+                />
+              </div>
               <button
                 type="submit"
                 className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-3.5 rounded-xl transition-all duration-200 mt-4 cursor-pointer text-sm shadow-md"

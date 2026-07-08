@@ -1,9 +1,9 @@
-import React from 'react';
+
 import ReactECharts from 'echarts-for-react';
 import useWidgetData from '../../hooks/useWidgetData';
 
 
-const BenchmarkComparisonChartWidget = ({ title = 'Benchmark Comparison Chart' }) => {
+const BenchmarkComparisonChartWidget = ({ widget }) => {
   const initialOption = { xAxis: { type: 'category', data: ['Jan', 'Feb', 'Mar'], axisLabel: { color: "#9ca3af" } }, yAxis: { type: 'value', axisLabel: { color: "#9ca3af" }, splitLine: { lineStyle: { color: '#1f293d' } } }, series: [{ data: [120, 200, 150], type: 'bar', itemStyle: { color: '#8b5cf6', borderRadius: [4,4,0,0] } }] };
   const option = useWidgetData('benchmark-comparison-chart', initialOption);
 

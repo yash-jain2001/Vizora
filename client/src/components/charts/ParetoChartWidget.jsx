@@ -1,9 +1,9 @@
-import React from 'react';
+
 import ReactECharts from 'echarts-for-react';
 import useWidgetData from '../../hooks/useWidgetData';
 
 
-const ParetoChartWidget = ({ title = 'Pareto Chart' }) => {
+const ParetoChartWidget = ({ widget }) => {
   const initialOption = {
     tooltip: {
       trigger: 'axis',

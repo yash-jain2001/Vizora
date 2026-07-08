@@ -7,27 +7,15 @@ import WidgetContainer from '../widgets/WidgetContainer'
 import { useEffect, useState } from 'react'
 import API from '../../api/axios'
 
-const PieChartWidget = ({ title = 'Pie Chart' }) => {
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await API.get('/dashboard/pie-chart')
-        setData(res.data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchData()
-  }, [])
+const PieChartWidget = ({ widget }) => {
+  const { data } = useWidgetData(widget)
 
   return (
-    <WidgetContainer title={title}>
+    <WidgetContainer title={widget?.title || 'Widget'}>
       <ResponsiveContainer width='100%' height='100%'>
 
         <PieChart>
-          <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8">
+          <Pie data={data} dataKey={widget?.yAxis || 'value'} nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="#8884d8">
             {data.map((entry, index) => <Cell key={'cell-' + index} fill={['#0088FE', '#00C49F', '#FFBB28', '#FF8042'][index % 4]} />)}
           </Pie>
           <Tooltip contentStyle={{ backgroundColor: '#121824', border: '1px solid #1f293d', borderRadius: '12px', color: '#fff' }} />

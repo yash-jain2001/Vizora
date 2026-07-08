@@ -1,9 +1,9 @@
-import React from 'react';
+
 import ReactECharts from 'echarts-for-react';
 import useWidgetData from '../../hooks/useWidgetData';
 
 
-const SunburstChartWidget = ({ title = 'Sunburst Chart' }) => {
+const SunburstChartWidget = ({ widget }) => {
   const initialOption = { series: { type: 'sunburst', data: [{ name: 'Factory A', children: [{ name: 'Line 1', value: 15 }] }], radius: [0, '90%'], label: { rotate: 'radial', color: '#fff' } } };
   const option = useWidgetData('sunburst-chart', initialOption);
 
