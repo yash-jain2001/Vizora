@@ -12,6 +12,7 @@ import Datasources from "../pages/Datasources";
 import Alerts from "../pages/Alert";
 import Analytics from "../pages/Analytics";
 import Admin from "../pages/Admin";
+import DesignForge from "../pages/DesignForge";
 
 import ProtectedRoute from "./ProtectedRoute";
 import RoleRoute from "./RoleRoute";
@@ -38,6 +39,15 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/designforge"
+          element={
+            <ProtectedRoute>
+              <DesignForge />
             </ProtectedRoute>
           }
         />
