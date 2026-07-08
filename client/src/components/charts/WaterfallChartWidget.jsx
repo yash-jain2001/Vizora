@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
+import useWidgetData from '../../hooks/useWidgetData';
 
 
 const WaterfallChartWidget = ({ title = 'Waterfall Chart' }) => {
-  const option = { xAxis: { type: 'category', data: ['A','B','C','D'], axisLabel: { color: "#9ca3af" } }, yAxis: { type: 'value', axisLabel: { color: "#9ca3af" }, splitLine: { lineStyle: { color: '#1f293d' } } }, series: [{ type: 'line', step: 'start', data: [120, 132, 101, 134], itemStyle: { color: '#ec4899' } }] };
+  const initialOption = { xAxis: { type: 'category', data: ['A','B','C','D'], axisLabel: { color: "#9ca3af" } }, yAxis: { type: 'value', axisLabel: { color: "#9ca3af" }, splitLine: { lineStyle: { color: '#1f293d' } } }, series: [{ type: 'line', step: 'start', data: [120, 132, 101, 134], itemStyle: { color: '#ec4899' } }] };
+  const option = useWidgetData('waterfall-chart', initialOption);
 
   return (
     <div className="w-full h-full flex flex-col pt-3 pb-4 px-4 relative">

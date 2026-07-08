@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
+import useWidgetData from '../../hooks/useWidgetData';
 
 
 const SunburstChartWidget = ({ title = 'Sunburst Chart' }) => {
-  const option = { series: { type: 'sunburst', data: [{ name: 'Factory A', children: [{ name: 'Line 1', value: 15 }] }], radius: [0, '90%'], label: { rotate: 'radial', color: '#fff' } } };
+  const initialOption = { series: { type: 'sunburst', data: [{ name: 'Factory A', children: [{ name: 'Line 1', value: 15 }] }], radius: [0, '90%'], label: { rotate: 'radial', color: '#fff' } } };
+  const option = useWidgetData('sunburst-chart', initialOption);
 
   return (
     <div className="w-full h-full flex flex-col pt-3 pb-4 px-4 relative">

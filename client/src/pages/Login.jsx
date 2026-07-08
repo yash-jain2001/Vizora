@@ -6,6 +6,7 @@ import logo from "../assets/logo.jpeg"
 import API from "../api/axios";
 
 import { AuthContext } from "../context/AuthContext";
+import SEOHead from '../components/SEOHead';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -42,6 +43,11 @@ const Login = () => {
 
   return (
     <div className="relative h-screen w-screen flex items-center justify-center bg-brand-dark overflow-hidden text-white">
+      <SEOHead
+        title="Sign In"
+        description="Sign in to your Vizora IoT monitoring dashboard. Access real-time sensor data, analytics, and alerts."
+        canonicalPath="/login"
+      />
       {/* Background Radial Glows */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none"></div>

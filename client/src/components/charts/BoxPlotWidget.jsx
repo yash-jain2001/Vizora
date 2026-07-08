@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
+import useWidgetData from '../../hooks/useWidgetData';
 
 
 const BoxPlotWidget = ({ title = 'Box Plot' }) => {
-  const option = { dataset: [{ source: [ [850, 740, 900, 1070], [960, 940, 960, 940] ] }, { transform: { type: 'boxplot' } }], xAxis: { type: 'category', axisLabel: { color: "#9ca3af" } }, yAxis: { type: 'value', axisLabel: { color: "#9ca3af" }, splitLine: { lineStyle: { color: '#1f293d' } } }, series: [{ name: 'boxplot', type: 'boxplot', datasetIndex: 1, itemStyle: { borderColor: '#3b82f6' } }] };
+  const initialOption = { dataset: [{ source: [ [850, 740, 900, 1070], [960, 940, 960, 940] ] }, { transform: { type: 'boxplot' } }], xAxis: { type: 'category', axisLabel: { color: "#9ca3af" } }, yAxis: { type: 'value', axisLabel: { color: "#9ca3af" }, splitLine: { lineStyle: { color: '#1f293d' } } }, series: [{ name: 'boxplot', type: 'boxplot', datasetIndex: 1, itemStyle: { borderColor: '#3b82f6' } }] };
+  const option = useWidgetData('box-plot', initialOption);
 
   return (
     <div className="w-full h-full flex flex-col pt-3 pb-4 px-4 relative">

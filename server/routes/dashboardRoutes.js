@@ -21,6 +21,8 @@ const {
   getStepLineChartData,
 } = require('../controllers/dashboardController')
 
+const { getWidgetData } = require('../controllers/widgetDataController')
+
 const router = express.Router()
 
 router.get('/stats', getDashboardStats)
@@ -41,5 +43,6 @@ router.get('/stacked-bar-chart', getStackedBarChartData)
 router.get('/biaxial-line-chart', getBiaxialLineChartData)
 router.get('/biaxial-bar-chart', getBiaxialBarChartData)
 router.get('/step-line-chart', getStepLineChartData)
+router.get('/widget-data/:type', getWidgetData)
 
 module.exports = router

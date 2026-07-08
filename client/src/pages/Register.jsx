@@ -11,6 +11,7 @@ import {
 import API from "../api/axios";
 
 import { AuthContext } from "../context/AuthContext";
+import SEOHead from '../components/SEOHead';
 
 const Register = () => {
 
@@ -64,6 +65,11 @@ const Register = () => {
 
   return (
     <div className="relative h-screen w-screen flex items-center justify-center bg-brand-dark overflow-hidden text-white">
+      <SEOHead
+        title="Create Account"
+        description="Create a free Vizora account. Start monitoring IoT sensor data with real-time dashboards, 100+ chart types, and smart alerts."
+        canonicalPath="/register"
+      />
       {/* Background Radial Glows */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none"></div>
@@ -156,7 +162,7 @@ const Register = () => {
 
         <p className="text-center mt-5 text-sm text-slate-400">
           Already have an account?{" "}
-          <Link to="/" className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors duration-200">
+          <Link to="/login" className="text-emerald-400 hover:text-emerald-300 font-semibold transition-colors duration-200">
             Login
           </Link>
         </p>

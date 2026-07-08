@@ -2,8 +2,10 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  Navigate,
 } from "react-router-dom";
 
+import LandingPage from "../pages/LandingPage";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 
@@ -25,6 +27,11 @@ const AppRoutes = () => {
 
         <Route
           path="/"
+          element={<LandingPage />}
+        />
+
+        <Route
+          path="/login"
           element={<Login />}
         />
 
@@ -80,6 +87,11 @@ const AppRoutes = () => {
               <Admin />
             </RoleRoute>
           }
+        />
+
+        <Route
+          path="*"
+          element={<Navigate to="/" replace />}
         />
 
       </Routes>
