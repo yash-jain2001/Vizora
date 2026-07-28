@@ -11,19 +11,20 @@ const {
 )
 
 const protect = require('../middlewares/authMiddleware')
+const authorizeRoles = require('../middlewares/roleMiddleware')
 
 const router = express.Router()
 
 router.use(protect)
 
-router.post('/', createDashboard)
+router.post('/', authorizeRoles('admin'), createDashboard)
 
 router.get('/', getDashboards)
 
 router.get('/:id', getDashboardById)
 
-router.put('/:id', updateDashboard)
+router.put('/:id', authorizeRoles('admin', 'editor'), updateDashboard)
 
-router.delete('/:id', deleteDashboard)
+router.delete('/:id', authorizeRoles('admin'), deleteDashboard)
 
 module.exports = router

@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import DashboardLayout from '../components/layout/DashboardLayout';
+import { AuthContext } from '../context/AuthContext';
 
 const DashboardsList = () => {
   const [dashboards, setDashboards] = useState([]);
@@ -10,6 +11,7 @@ const DashboardsList = () => {
   const [isDatasourceModalOpen, setIsDatasourceModalOpen] = useState(false);
   const [selectedDatasource, setSelectedDatasource] = useState('');
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
   const fetchDashboards = async () => {
     try {
@@ -106,15 +108,17 @@ const DashboardsList = () => {
             Manage and create your custom dashboard layouts
           </p>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-emerald-500 hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] text-slate-950 font-bold px-5 py-3 rounded-xl transition-all duration-200 flex items-center gap-2 cursor-pointer text-sm shadow-md active:translate-y-0.5"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          New Dashboard
-        </button>
+        {user?.role === 'admin' && (
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-emerald-500 hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] text-slate-950 font-bold px-5 py-3 rounded-xl transition-all duration-200 flex items-center gap-2 cursor-pointer text-sm shadow-md active:translate-y-0.5"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            New Dashboard
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -135,15 +139,17 @@ const DashboardsList = () => {
                 <span className="text-xs font-bold text-slate-500 bg-slate-900 px-2 py-1 rounded-lg">
                   {dash.widgets?.length || 0} Widgets
                 </span>
-                <button
-                  onClick={(e) => handleDeleteDashboard(e, dash._id)}
-                  className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
-                  title="Delete Dashboard"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={(e) => handleDeleteDashboard(e, dash._id)}
+                    className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+                    title="Delete Dashboard"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                )}
               </div>
             </div>
             <h3 className="text-xl font-bold text-white mb-2 group-hover:text-emerald-400 transition-colors">
@@ -163,13 +169,17 @@ const DashboardsList = () => {
               </svg>
             </div>
             <h3 className="text-xl font-bold text-slate-300 mb-2">No Dashboards Yet</h3>
-            <p className="text-slate-500 mb-6 max-w-sm">Create your first dashboard to start visualizing your data.</p>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="text-emerald-400 font-bold border-b border-emerald-500/30 hover:border-emerald-400"
-            >
-              Create New Dashboard
-            </button>
+            <p className="text-slate-500 mb-6 max-w-sm">
+              {user?.role === 'admin' ? 'Create your first dashboard to start visualizing your data.' : 'No dashboards have been created yet.'}
+            </p>
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="text-emerald-400 font-bold border-b border-emerald-500/30 hover:border-emerald-400"
+              >
+                Create New Dashboard
+              </button>
+            )}
           </div>
         )}
       </div>

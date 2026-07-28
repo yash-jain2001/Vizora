@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import API from "../api/axios";
 import DashboardLayout from "../components/layout/DashboardLayout";
+import { AuthContext } from '../context/AuthContext';
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -16,6 +17,7 @@ import {
 } from "recharts";
 
 const DesignForge = () => {
+  const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [erpData, setErpData] = useState(null);
   const [showConfig, setShowConfig] = useState(false);
@@ -646,41 +648,43 @@ const [activeTab, setActiveTab] = useState("mission-control");
 
               {/* ACTION: CREATE JOB CARD FROM CONFIG */}
               <div className="border-t border-white/5 pt-6 mt-6 flex justify-end">
-                <button
-                  onClick={() => {
-                    const newId = `WO-${Math.floor(106 + Math.random() * 900)}`;
-                    const pData = productsData[selectedProduct];
-                    let specs = `${woodType} wood, ${finishType} finish`;
-                    if (selectedProduct === "classic-chair") specs += `, ${cushionType} cushion`;
-                    if (selectedProduct === "executive-desk") specs += `, ${deskSize} size`;
-                    if (selectedProduct === "luxury-sofa") specs += `, ${sofaFabric}`;
+                {user?.role === 'admin' && (
+                  <button
+                    onClick={() => {
+                      const newId = `WO-${Math.floor(106 + Math.random() * 900)}`;
+                      const pData = productsData[selectedProduct];
+                      let specs = `${woodType} wood, ${finishType} finish`;
+                      if (selectedProduct === "classic-chair") specs += `, ${cushionType} cushion`;
+                      if (selectedProduct === "executive-desk") specs += `, ${deskSize} size`;
+                      if (selectedProduct === "luxury-sofa") specs += `, ${sofaFabric}`;
 
-                    const newJob = {
-                      id: newId,
-                      name: pData.name,
-                      client: "Custom Order (ERP)",
-                      stage: "cutting",
-                      qty: 1,
-                      priority: "Medium",
-                      spec: specs,
-                      checklist: pData.bomBase.map((b, i) => ({
-                        id: i + 1,
-                        text: `Verify ${b.item} specs & quality`,
-                        checked: false
-                      }))
-                    };
+                      const newJob = {
+                        id: newId,
+                        name: pData.name,
+                        client: "Custom Order (ERP)",
+                        stage: "cutting",
+                        qty: 1,
+                        priority: "Medium",
+                        spec: specs,
+                        checklist: pData.bomBase.map((b, i) => ({
+                          id: i + 1,
+                          text: `Verify ${b.item} specs & quality`,
+                          checked: false
+                        }))
+                      };
 
-                    setJobs(prev => [...prev, newJob]);
-                    alert(`Created Work Order ${newId} and added to Shop Floor Cutting stage!`);
-                    setActiveTab("shop-floor");
-                  }}
-                  className="bg-emerald-500 hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] text-slate-950 font-black text-xs uppercase px-5 py-3 rounded-xl transition-all duration-200 cursor-pointer flex items-center gap-2"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
-                  Generate Work Order
-                </button>
+                      setJobs(prev => [...prev, newJob]);
+                      alert(`Created Work Order ${newId} and added to Shop Floor Cutting stage!`);
+                      setActiveTab("shop-floor");
+                    }}
+                    className="bg-emerald-500 hover:bg-emerald-400 hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] text-slate-950 font-black text-xs uppercase px-5 py-3 rounded-xl transition-all duration-200 cursor-pointer flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Generate Work Order
+                  </button>
+                )}
               </div>
             </div>
           </div>

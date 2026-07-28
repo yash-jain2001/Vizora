@@ -145,9 +145,11 @@ const Register = () => {
             <select
               name="role"
               onChange={handleChange}
+              defaultValue="viewer"
               className="w-full px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-800 text-white focus:outline-none focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
             >
-              <option value="member">Member</option>
+              <option value="viewer">Viewer</option>
+              <option value="editor">Editor</option>
               <option value="admin">Admin</option>
             </select>
           </div>

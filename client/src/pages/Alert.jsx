@@ -1,6 +1,7 @@
 import {
   useEffect,
   useState,
+  useContext
 } from "react";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
@@ -8,8 +9,10 @@ import DashboardLayout from "../components/layout/DashboardLayout";
 import API from "../api/axios";
 
 import socket from "../hooks/useSocket";
+import { AuthContext } from '../context/AuthContext';
 
 const Alerts = () => {
+  const { user } = useContext(AuthContext);
 
   const [alerts, setAlerts] =
     useState([])
@@ -187,7 +190,7 @@ const Alerts = () => {
               </div>
 
               {/* ACTIONS */}
-              {!alert.resolved && (
+              {!alert.resolved && user?.role !== 'viewer' && (
                 <div className="flex gap-4 mt-6 flex-wrap">
 
                   {!alert.acknowledged && (

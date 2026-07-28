@@ -9,6 +9,7 @@ const {
 )
 
 const protect = require('../middlewares/authMiddleware')
+const authorizeRoles = require('../middlewares/roleMiddleware')
 
 const router = express.Router()
 
@@ -18,11 +19,13 @@ router.get('/', getAlerts)
 
 router.put(
   '/acknowledge/:id',
+  authorizeRoles('admin', 'editor'),
   acknowledgeAlert
 )
 
 router.put(
   '/resolve/:id',
+  authorizeRoles('admin', 'editor'),
   resolveAlert
 )
 

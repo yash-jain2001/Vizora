@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import API from "../api/axios";
+import { AuthContext } from '../context/AuthContext';
 
 const Datasources = () => {
+  const { user } = useContext(AuthContext);
   const [datasources, setDatasources] = useState([]);
   const [view, setView] = useState("list"); // "list", "select-connector", "connector-config"
   const [configStep, setConfigStep] = useState(1); // 1, 2, 3
@@ -1420,15 +1422,17 @@ const Datasources = () => {
                 Manage and configure your live data feeds and system connections
               </p>
             </div>
-            <button
-              onClick={() => setView("select-connector")}
-              className="bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] text-white font-bold py-3.5 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 shadow-md active:translate-y-0.5 self-start"
-            >
-              <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-              Add data source
-            </button>
+            {user?.role === 'admin' && (
+              <button
+                onClick={() => setView("select-connector")}
+                className="bg-blue-600 hover:bg-blue-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] text-white font-bold py-3.5 px-6 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer transition-all duration-200 shadow-md active:translate-y-0.5 self-start"
+              >
+                <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add data source
+              </button>
+            )}
           </div>
 
           {/* LIST */}
@@ -1441,14 +1445,16 @@ const Datasources = () => {
               </div>
               <h3 className="text-xl font-bold text-white mb-2">No connected data sources</h3>
               <p className="text-slate-400 max-w-md mx-auto mb-6 text-sm">
-                Get started by adding a connector to ingest time-series or IoT telemetry data.
+                {user?.role === 'admin' ? 'Get started by adding a connector to ingest time-series or IoT telemetry data.' : 'No datasources have been connected yet.'}
               </p>
-              <button
-                onClick={() => setView("select-connector")}
-                className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-5 rounded-xl text-sm transition-all inline-flex items-center gap-2 cursor-pointer shadow-md"
-              >
-                Choose a Connector
-              </button>
+              {user?.role === 'admin' && (
+                <button
+                  onClick={() => setView("select-connector")}
+                  className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-5 rounded-xl text-sm transition-all inline-flex items-center gap-2 cursor-pointer shadow-md"
+                >
+                  Choose a Connector
+                </button>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1478,15 +1484,17 @@ const Datasources = () => {
                             {source.type}
                           </span>
                         )}
-                        <button
-                          onClick={() => handleDelete(source._id)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 hover:border-red-500 w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer shadow-sm"
-                          title="Delete Datasource"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                          </svg>
-                        </button>
+                        {user?.role === 'admin' && (
+                          <button
+                            onClick={() => handleDelete(source._id)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white border border-red-500/20 hover:border-red-500 w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer shadow-sm"
+                            title="Delete Datasource"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                          </button>
+                        )}
                       </div>
                     </div>
 
