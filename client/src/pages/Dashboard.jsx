@@ -114,6 +114,13 @@ const Dashboard = () => {
   const [widgets, setWidgets] = useState([]);
   const [isEditMode, setIsEditMode] = useState(true);
   const containerRef = useRef(null);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Widget configuration states
   const [datasources, setDatasources] = useState([]);
@@ -506,14 +513,14 @@ const Dashboard = () => {
         className="relative transition-all duration-300 rounded-3xl"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(12, 1fr)',
-          gridAutoRows: '100px',
+          gridTemplateColumns: windowWidth < 1024 ? '1fr' : 'repeat(12, 1fr)',
+          gridAutoRows: windowWidth < 1024 ? 'minmax(300px, auto)' : '100px',
           gap: '1.5rem',
           minHeight: '600px',
           padding: isEditMode ? '1.5rem' : '0px',
           backgroundColor: isEditMode ? 'rgba(30, 41, 59, 0.2)' : 'transparent',
           border: isEditMode ? '2px dashed rgba(16, 185, 129, 0.2)' : '2px solid transparent',
-          backgroundImage: isEditMode
+          backgroundImage: isEditMode && windowWidth >= 1024
             ? 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)'
             : 'none',
           backgroundSize: 'calc((100% - 11 * 1.5rem) / 12 + 1.5rem) 100px',
@@ -530,8 +537,8 @@ const Dashboard = () => {
                 : 'border border-white/5'
             }`}
             style={{
-              gridColumn: `${widget.x + 1} / span ${widget.w}`,
-              gridRow: `${widget.y + 1} / span ${widget.h}`,
+              gridColumn: windowWidth < 1024 ? '1 / -1' : `${widget.x + 1} / span ${widget.w}`,
+              gridRow: windowWidth < 1024 ? 'auto' : `${widget.y + 1} / span ${widget.h}`,
             }}
           >
             {/* DRAG HANDLE OVERLAY (Active only in edit mode) */}
