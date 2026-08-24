@@ -83,6 +83,11 @@ app.use(
   require('./routes/erpRoutes')
 )
 
+app.use(
+  '/api/home-automation',
+  require('./routes/homeAutomationRoutes')
+)
+
 io.on(
   'connection',
   (socket) => {

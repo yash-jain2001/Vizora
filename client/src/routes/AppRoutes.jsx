@@ -16,6 +16,7 @@ import Alerts from "../pages/Alert";
 import Analytics from "../pages/Analytics";
 import Admin from "../pages/Admin";
 import DesignForge from "../pages/DesignForge";
+import HomeAutomation from "../pages/HomeAutomation";
 
 import ProtectedRoute from "./ProtectedRoute";
 import RoleRoute from "./RoleRoute";
@@ -56,6 +57,15 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/home-automation"
+          element={
+            <ProtectedRoute>
+              <HomeAutomation />
             </ProtectedRoute>
           }
         />
