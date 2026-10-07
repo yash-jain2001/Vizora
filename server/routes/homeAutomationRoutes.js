@@ -7,7 +7,11 @@ const {
   getRules,
   createRule,
   updateRule,
-  deleteRule
+  deleteRule,
+  getIntegrations,
+  testIntegration,
+  saveIntegration,
+  deleteIntegration
 } = require('../controllers/homeAutomationController')
 
 // All routes are protected by authMiddleware
@@ -25,5 +29,14 @@ router.route('/rules')
 router.route('/rules/:id')
   .put(updateRule)
   .delete(deleteRule)
+
+// Integrations & Plugins endpoints
+router.route('/integrations')
+  .get(getIntegrations)
+  .post(saveIntegration)
+
+router.post('/integrations/test', testIntegration)
+
+router.delete('/integrations/:id', deleteIntegration)
 
 module.exports = router

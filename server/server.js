@@ -16,6 +16,9 @@ const { initMqttSubscriptions } =
 const { initPolling } =
   require('./services/httpPollingService')
 
+const { initEscalationWorker } =
+  require('./services/escalationService')
+
 connectDB()
 
 const app = express()
@@ -39,6 +42,9 @@ initMqttSubscriptions(io)
 
 // Initialize HTTP background polling
 initPolling(io)
+
+// Initialize Notification Escalation Engine
+initEscalationWorker(io, 30)
 
 app.use(cors())
 app.use(express.json())

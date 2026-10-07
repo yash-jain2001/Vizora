@@ -19,6 +19,7 @@ const HomeAutomation = () => {
   const [activeTab, setActiveTab] = useState("controls");
   const [devices, setDevices] = useState([]);
   const [rules, setRules] = useState([]);
+  const [integrations, setIntegrations] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState("All");
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
@@ -27,7 +28,149 @@ const HomeAutomation = () => {
   const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
   const [newRuleForm, setNewRuleForm] = useState({ name: "", trigger: "", action: "" });
 
+  // Integration plugin modal & search state
+  const [pluginCategory, setPluginCategory] = useState("All");
+  const [pluginSearch, setPluginSearch] = useState("");
+  const [activePluginModal, setActivePluginModal] = useState(null);
+  const [pluginConfig, setPluginConfig] = useState({});
+  const [testingConnection, setTestingConnection] = useState(false);
+  const [testResult, setTestResult] = useState(null);
+
   const rooms = ["All", "Living Room", "Bedroom", "Kitchen", "Backyard"];
+
+  // Home Assistant Catalog Definition
+  const catalogPlugins = [
+    {
+      id: "home-assistant",
+      name: "Home Assistant Core API",
+      category: "hubs",
+      icon: "🏠",
+      desc: "Connect directly to your Home Assistant instance WebSocket and REST API server.",
+      fields: [
+        { key: "host", label: "Instance Server URL", placeholder: "http://192.168.1.100:8123" },
+        { key: "token", label: "Long-Lived Access Token", placeholder: "eyJhbGciOiJIUzI1NiIsIn..." }
+      ]
+    },
+    {
+      id: "philips-hue",
+      name: "Philips Hue Bridge",
+      category: "lighting",
+      icon: "💡",
+      desc: "Local control for Philips Hue smart bulbs, lightstrips, and motion sensors.",
+      fields: [
+        { key: "bridgeIp", label: "Hue Bridge IP Address", placeholder: "192.168.1.150" },
+        { key: "userKey", label: "API Username Key", placeholder: "hue_user_key_xyz" }
+      ]
+    },
+    {
+      id: "tuya",
+      name: "Tuya / Smart Life Cloud",
+      category: "lighting",
+      icon: "🌐",
+      desc: "Cloud integration for Tuya and Smart Life powered IoT accessories and smart plugs.",
+      fields: [
+        { key: "clientId", label: "Tuya IoT Client ID", placeholder: "tuya_client_id_123" },
+        { key: "clientSecret", label: "Tuya IoT Client Secret", placeholder: "tuya_secret_abc" }
+      ]
+    },
+    {
+      id: "zigbee2mqtt",
+      name: "Zigbee2MQTT Broker",
+      category: "hubs",
+      icon: "🐝",
+      desc: "Bridge Zigbee devices to MQTT without vendor lock-in or cloud dependencies.",
+      fields: [
+        { key: "host", label: "MQTT Broker Host", placeholder: "mqtt://192.168.1.50" },
+        { key: "port", label: "Port", placeholder: "1883" },
+        { key: "topic", label: "Base Topic", placeholder: "zigbee2mqtt" }
+      ]
+    },
+    {
+      id: "esphome",
+      name: "ESPHome Native API",
+      category: "hubs",
+      icon: "⚡",
+      desc: "Control custom ESP8266/ESP32 microcontrollers and DIY smart sensors.",
+      fields: [
+        { key: "host", label: "ESPHome Node IP / Hostname", placeholder: "192.168.1.88" },
+        { key: "encryptionKey", label: "Noise Encryption Key", placeholder: "esphome_key_123" }
+      ]
+    },
+    {
+      id: "shelly",
+      name: "Shelly Smart Relays",
+      category: "lighting",
+      icon: "🔌",
+      desc: "Direct HTTP and MQTT control for Shelly smart relays, dimmers, and power meters.",
+      fields: [
+        { key: "deviceIp", label: "Shelly Device IP Address", placeholder: "192.168.1.75" },
+        { key: "username", label: "Device Admin Username", placeholder: "admin" },
+        { key: "password", label: "Password", placeholder: "••••••••" }
+      ]
+    },
+    {
+      id: "nest",
+      name: "Google Nest Ecosystem",
+      category: "climate",
+      icon: "🌡️",
+      desc: "Integrate Nest Thermostats, Protect smoke detectors, and Security cameras.",
+      fields: [
+        { key: "projectId", label: "Google Device Access Project ID", placeholder: "nest-project-123" },
+        { key: "refreshToken", label: "OAuth Refresh Token", placeholder: "nest_refresh_token_xyz" }
+      ]
+    },
+    {
+      id: "ring",
+      name: "Ring Video Doorbell & Security",
+      category: "security",
+      icon: "🔔",
+      desc: "Sync Ring Doorbells, Chimes, Motion Sensors, and Security Cameras.",
+      fields: [
+        { key: "refreshToken", label: "Ring OAuth Refresh Token", placeholder: "ring_token_123" }
+      ]
+    },
+    {
+      id: "openweather",
+      name: "OpenWeatherMap Service",
+      category: "weather",
+      icon: "🌤️",
+      desc: "Fetch real-time outdoor temperature, forecast, humidity, and UV index.",
+      fields: [
+        { key: "apiKey", label: "OpenWeather API Key", placeholder: "openweather_key_abc" },
+        { key: "location", label: "City Name or Lat,Long", placeholder: "New York, US" }
+      ]
+    },
+    {
+      id: "spotify",
+      name: "Spotify Connect Player",
+      category: "media",
+      icon: "🎵",
+      desc: "Display active media playback and control smart speaker playlists.",
+      fields: [
+        { key: "clientId", label: "Spotify App Client ID", placeholder: "spotify_client_123" }
+      ]
+    },
+    {
+      id: "sonos",
+      name: "Sonos Soundbar & Speakers",
+      category: "media",
+      icon: "🔊",
+      desc: "Local network discovery for Sonos wireless audio devices.",
+      fields: [
+        { key: "speakerIp", label: "Sonos Speaker IP Address", placeholder: "192.168.1.200" }
+      ]
+    },
+    {
+      id: "matter",
+      name: "Matter / Thread Protocol",
+      category: "hubs",
+      icon: "🔮",
+      desc: "Universal IP-based smart home connectivity standard.",
+      fields: [
+        { key: "controllerIp", label: "Matter Fabric Controller IP", placeholder: "192.168.1.1" }
+      ]
+    }
+  ];
 
   // Show status toasts
   const showToast = (msg) => {
@@ -43,6 +186,8 @@ const HomeAutomation = () => {
       setDevices(devicesRes.data);
       const rulesRes = await API.get("/home-automation/rules");
       setRules(rulesRes.data);
+      const integrationsRes = await API.get("/home-automation/integrations");
+      setIntegrations(integrationsRes.data);
       setLoading(false);
     } catch (err) {
       console.error("Error fetching home automation data:", err);
@@ -58,21 +203,16 @@ const HomeAutomation = () => {
   // --- UPDATE DEVICE STATE ---
   const handleDeviceToggle = async (deviceId, updates) => {
     try {
-      // Optimistically update UI
       setDevices(prev =>
         prev.map(d => (d._id === deviceId ? { ...d, ...updates } : d))
       );
-
       const res = await API.put(`/home-automation/devices/${deviceId}`, updates);
-      
-      // Update with exact values from server (calculates precise wattage)
       setDevices(prev =>
         prev.map(d => (d._id === deviceId ? res.data : d))
       );
     } catch (err) {
       console.error("Error toggling device status:", err);
       showToast("Failed to update device.");
-      // Revert states
       fetchData();
     }
   };
@@ -82,15 +222,12 @@ const HomeAutomation = () => {
     showToast(`Activating ${sceneName}...`);
     try {
       let updates = [];
-      
       if (sceneName === "Away Mode") {
-        // Turn off everything, lock gates
         updates = devices.map(d => {
-          if (d.type === "lock") return { id: d._id, data: { status: true } }; // lock gates
-          return { id: d._id, data: { status: false } }; // turn off others
+          if (d.type === "lock") return { id: d._id, data: { status: true } };
+          return { id: d._id, data: { status: false } };
         });
       } else if (sceneName === "Morning Mode") {
-        // Unlock gates, turn on kitchen coffee maker/lights, turn off bedroom climate
         updates = devices.map(d => {
           if (d.type === "lock") return { id: d._id, data: { status: false } };
           if (d.name.includes("Coffee") || d.name.includes("Kitchen")) return { id: d._id, data: { status: true, value: 90 } };
@@ -98,7 +235,6 @@ const HomeAutomation = () => {
           return null;
         }).filter(Boolean);
       } else if (sceneName === "Cinema Mode") {
-        // Dim living room lights, turn on TV power plug, turn off other lights
         updates = devices.map(d => {
           if (d.name === "Living Room Lights") return { id: d._id, data: { status: true, value: 20 } };
           if (d.name === "Smart TV Power") return { id: d._id, data: { status: true } };
@@ -106,7 +242,6 @@ const HomeAutomation = () => {
           return null;
         }).filter(Boolean);
       } else if (sceneName === "Night Mode") {
-        // Lock gate, turn off living room/kitchen lights, turn on bedroom climate
         updates = devices.map(d => {
           if (d.type === "lock") return { id: d._id, data: { status: true } };
           if (d.room === "Bedroom" && d.type === "thermostat") return { id: d._id, data: { status: true, value: 22 } };
@@ -115,7 +250,6 @@ const HomeAutomation = () => {
         }).filter(Boolean);
       }
 
-      // Update all devices sequentially
       await Promise.all(
         updates.map(item => API.put(`/home-automation/devices/${item.id}`, item.data))
       );
@@ -171,6 +305,67 @@ const HomeAutomation = () => {
     }
   };
 
+  // --- INTEGRATIONS HANDLERS ---
+  const handleTestPluginConnection = async () => {
+    if (!activePluginModal) return;
+    try {
+      setTestingConnection(true);
+      setTestResult(null);
+      const res = await API.post("/home-automation/integrations/test", {
+        pluginId: activePluginModal.id,
+        config: pluginConfig
+      });
+      setTestResult({ success: true, message: res.data.message });
+      setTestingConnection(false);
+    } catch (err) {
+      setTestResult({
+        success: false,
+        message: err.response?.data?.message || "Connection test failed. Check host IP or API credentials."
+      });
+      setTestingConnection(false);
+    }
+  };
+
+  const handleSaveIntegration = async (e) => {
+    e.preventDefault();
+    if (!activePluginModal) return;
+    try {
+      await API.post("/home-automation/integrations", {
+        pluginId: activePluginModal.id,
+        name: activePluginModal.name,
+        category: activePluginModal.category,
+        config: pluginConfig
+      });
+      showToast(`${activePluginModal.name} plugin installed & synced!`);
+      setActivePluginModal(null);
+      setPluginConfig({});
+      setTestResult(null);
+      fetchData();
+    } catch (err) {
+      console.error("Error saving integration:", err);
+      showToast("Failed to save integration.");
+    }
+  };
+
+  const handleDeleteIntegration = async (id) => {
+    try {
+      await API.delete(`/home-automation/integrations/${id}`);
+      setIntegrations(prev => prev.filter(i => i._id !== id));
+      showToast("Integration removed.");
+    } catch (err) {
+      console.error("Error deleting integration:", err);
+      showToast("Failed to remove integration.");
+    }
+  };
+
+  // Filter Catalog
+  const filteredCatalog = catalogPlugins.filter(plugin => {
+    const matchesCategory = pluginCategory === "All" || plugin.category === pluginCategory;
+    const matchesSearch = plugin.name.toLowerCase().includes(pluginSearch.toLowerCase()) ||
+                          plugin.desc.toLowerCase().includes(pluginSearch.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
   // --- ENERGY CALCS ---
   const liveTotalLoad = devices.reduce((sum, d) => sum + (d.status ? d.power : 0), 0);
 
@@ -220,7 +415,7 @@ const HomeAutomation = () => {
             Home Automation
           </h1>
           <p className="text-slate-400 font-semibold text-sm">
-            Control and schedule smart accessories and utilities
+            Control smart accessories, automate routines, and manage Home Assistant plugins
           </p>
         </div>
 
@@ -230,7 +425,8 @@ const HomeAutomation = () => {
             { id: "controls", label: "Smart Controls" },
             { id: "energy", label: "Energy Analytics" },
             { id: "automations", label: "Automations" },
-            { id: "security", label: "CCTV & Security" }
+            { id: "security", label: "CCTV & Security" },
+            { id: "integrations", label: "Plugins & Integrations" }
           ].map(tab => (
             <button
               key={tab.id}
@@ -307,7 +503,6 @@ const HomeAutomation = () => {
                       device.status ? "border-emerald-500/15" : "border-white/5"
                     }`}
                   >
-                    {/* Device Card Top */}
                     <div>
                       <div className="flex items-start justify-between">
                         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{device.room}</span>
@@ -327,7 +522,6 @@ const HomeAutomation = () => {
                       <h4 className="text-md font-bold text-white mt-1 capitalize leading-snug">{device.name}</h4>
                     </div>
 
-                    {/* Device Specific Controls */}
                     <div className="min-h-12 flex items-center select-none w-full">
                       {device.status ? (
                         <div className="w-full animate-fade-in">
@@ -405,7 +599,6 @@ const HomeAutomation = () => {
                       )}
                     </div>
 
-                    {/* Bottom Status Trigger */}
                     <div className="border-t border-white/5 pt-3.5 flex justify-between items-center text-xs font-bold select-none">
                       <span className="text-slate-400 font-bold capitalize">{device.type}</span>
                       <button
@@ -428,7 +621,6 @@ const HomeAutomation = () => {
           {/* -------------------- TAB 2: ENERGY ANALYTICS -------------------- */}
           {activeTab === "energy" && (
             <div className="flex flex-col gap-8">
-              {/* CURRENT LOAD BANNER */}
               <div className="bg-emerald-500/10 border border-emerald-500/20 p-6 rounded-3xl shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-6 select-none relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
                 <div>
@@ -442,9 +634,7 @@ const HomeAutomation = () => {
                 </div>
               </div>
 
-              {/* GRAPHS ROW */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Historical Area chart */}
                 <div className="bg-brand-card/45 backdrop-blur-xl border border-white/5 p-6 rounded-3xl shadow-2xl lg:col-span-2 min-h-[380px] flex flex-col justify-between">
                   <div>
                     <h3 className="text-lg font-bold text-white">Power Ingestion History (24h)</h3>
@@ -469,7 +659,6 @@ const HomeAutomation = () => {
                   </div>
                 </div>
 
-                {/* Donut Category Breakdown */}
                 <div className="bg-brand-card/45 backdrop-blur-xl border border-white/5 p-6 rounded-3xl shadow-2xl min-h-[380px] flex flex-col justify-between">
                   <div>
                     <h3 className="text-lg font-bold text-white">Load Share Breakdown</h3>
@@ -527,7 +716,6 @@ const HomeAutomation = () => {
                 </button>
               </div>
 
-              {/* RULES LIST */}
               <div className="flex flex-col gap-4">
                 {rules.map(rule => (
                   <div
@@ -588,7 +776,6 @@ const HomeAutomation = () => {
                 ))}
               </div>
 
-              {/* CREATE RULE MODAL */}
               {isRuleModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md animate-fade-in">
                   <form onSubmit={handleAddRule} className="bg-brand-card border border-brand-border w-full max-w-lg rounded-3xl p-6 shadow-2xl relative flex flex-col gap-6">
@@ -608,7 +795,6 @@ const HomeAutomation = () => {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                      {/* Name */}
                       <div className="flex flex-col gap-1.5">
                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Rule Name</label>
                         <input
@@ -621,7 +807,6 @@ const HomeAutomation = () => {
                         />
                       </div>
 
-                      {/* Trigger */}
                       <div className="flex flex-col gap-1.5">
                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Trigger condition (IF)</label>
                         <input
@@ -634,7 +819,6 @@ const HomeAutomation = () => {
                         />
                       </div>
 
-                      {/* Action */}
                       <div className="flex flex-col gap-1.5">
                         <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Execution Action (THEN)</label>
                         <input
@@ -672,14 +856,12 @@ const HomeAutomation = () => {
           {/* -------------------- TAB 4: SECURITY & CCTV -------------------- */}
           {activeTab === "security" && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in">
-              {/* CCTV FEEDS */}
               <div className="lg:col-span-2 bg-brand-card/45 backdrop-blur-xl border border-white/5 p-6 rounded-3xl shadow-2xl flex flex-col justify-between">
                 <div>
                   <h3 className="text-lg font-bold text-white mb-1">Live Access Camera Streams</h3>
                   <p className="text-xs text-slate-400 mb-6 font-semibold">Live feeds of residential perimeters</p>
                 </div>
 
-                {/* Video Grids */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 select-none font-bold">
                   {[
                     { id: "CAM-01", label: "Front Gate Access", color: "brightness-75 contrast-125 saturate-50 hue-rotate-15" },
@@ -691,7 +873,6 @@ const HomeAutomation = () => {
                       key={cam.id}
                       className="relative rounded-2xl overflow-hidden aspect-video border border-white/5 shadow-inner bg-slate-950 flex flex-col justify-between p-4.5 group"
                     >
-                      {/* Top Label */}
                       <div className="flex justify-between items-start z-10">
                         <span className="bg-slate-950/70 backdrop-blur-md px-2.5 py-1 rounded-md text-[9px] font-black text-slate-300 font-mono">
                           {cam.id}: {cam.label}
@@ -702,14 +883,12 @@ const HomeAutomation = () => {
                         </div>
                       </div>
 
-                      {/* Video Center Grid Placeholder lines */}
                       <div className={`absolute inset-0 flex items-center justify-center pointer-events-none opacity-20 ${cam.color}`}>
                         <div className="w-full h-full border-t-[0.5px] border-b-[0.5px] border-dashed border-emerald-500 absolute"></div>
                         <div className="w-full h-full border-l-[0.5px] border-r-[0.5px] border-dashed border-emerald-500 absolute"></div>
                         <span className="text-xs text-emerald-400 font-mono tracking-widest animate-pulse font-semibold">1080p // STABLE</span>
                       </div>
 
-                      {/* Bottom Info bar */}
                       <div className="flex justify-between items-end z-10 text-[9px] text-slate-500 font-mono">
                         <span>FPS: 30.0</span>
                         <span>BITRATE: 4120 kbps</span>
@@ -719,7 +898,6 @@ const HomeAutomation = () => {
                 </div>
               </div>
 
-              {/* SECURITY LOGS */}
               <div className="lg:col-span-1 bg-brand-card/45 backdrop-blur-xl border border-white/5 p-6 rounded-3xl shadow-2xl flex flex-col gap-6 select-none">
                 <div>
                   <h3 className="text-lg font-bold text-white">Security Event Logs</h3>
@@ -755,6 +933,247 @@ const HomeAutomation = () => {
                   ))}
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* -------------------- TAB 5: PLUGINS & INTEGRATIONS -------------------- */}
+          {activeTab === "integrations" && (
+            <div className="flex flex-col gap-8 animate-fade-in select-none">
+              {/* INSTALLED PLUGINS MANAGER */}
+              <div className="bg-brand-card/45 border border-white/5 p-6 rounded-3xl shadow-2xl flex flex-col gap-5">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="text-md font-bold text-white">Active Installed Integrations</h3>
+                    <p className="text-xs text-slate-400 mt-0.5 font-semibold">Active plugins syncing smart entities into Vizora</p>
+                  </div>
+                  <span className="bg-slate-900 border border-white/5 px-3 py-1.5 rounded-xl text-xs text-emerald-400 font-bold font-mono">
+                    {integrations.length} Active Connected
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {integrations.map(integ => (
+                    <div
+                      key={integ._id}
+                      className="p-4 bg-slate-950/30 rounded-2xl border border-emerald-500/20 flex flex-col justify-between gap-4"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-slate-900 border border-white/5 flex items-center justify-center text-xl">
+                            {catalogPlugins.find(p => p.id === integ.pluginId)?.icon || "🔌"}
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold text-white">{integ.name}</h4>
+                            <span className="text-[10px] text-slate-400 font-mono">{integ.pluginId}</span>
+                          </div>
+                        </div>
+                        <span className="flex items-center gap-1 text-[9px] font-black uppercase text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                          Connected
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center border-t border-white/5 pt-3 text-xs font-semibold">
+                        <span className="text-slate-400 text-[11px]">
+                          ⚡ {integ.entitiesCount || 3} Entities Synced
+                        </span>
+                        <button
+                          onClick={() => handleDeleteIntegration(integ._id)}
+                          className="text-[10px] font-extrabold uppercase text-red-400 hover:text-red-300 cursor-pointer"
+                        >
+                          Uninstall
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* PLUGINS CATALOG EXPLORER */}
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Home Assistant Plugins Directory</h3>
+                    <p className="text-xs text-slate-400 mt-0.5 font-semibold">Browse and connect smart ecosystems, hubs, and cloud services</p>
+                  </div>
+
+                  {/* Search Bar */}
+                  <div className="relative min-w-64">
+                    <input
+                      type="text"
+                      value={pluginSearch}
+                      onChange={(e) => setPluginSearch(e.target.value)}
+                      placeholder="Search Home Assistant plugins..."
+                      className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-950/60 border border-white/5 text-white text-xs font-semibold outline-none focus:border-emerald-500/40"
+                    />
+                    <svg className="w-4 h-4 text-slate-500 absolute left-3 top-3" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Category Filter Chips */}
+                <div className="flex gap-2 overflow-x-auto pb-1 text-xs font-bold">
+                  {[
+                    { id: "All", label: "All Categories" },
+                    { id: "hubs", label: "Hubs & Protocols" },
+                    { id: "lighting", label: "Lighting & Power" },
+                    { id: "climate", label: "Climate & Energy" },
+                    { id: "security", label: "Security & Cameras" },
+                    { id: "media", label: "Media & Weather" }
+                  ].map(cat => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setPluginCategory(cat.id)}
+                      className={`px-3.5 py-2 rounded-xl border transition-all cursor-pointer ${
+                        pluginCategory === cat.id
+                          ? "bg-slate-900 border-emerald-500/30 text-emerald-400"
+                          : "bg-brand-card/45 border-white/5 text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {cat.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* PLUGINS GRID */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredCatalog.map(plugin => {
+                    const isInstalled = integrations.some(i => i.pluginId === plugin.id);
+                    return (
+                      <div
+                        key={plugin.id}
+                        className="bg-brand-card/45 border border-white/5 hover:border-emerald-500/20 rounded-2xl p-5 shadow-lg flex flex-col justify-between gap-4 transition-all duration-300 group hover:-translate-y-0.5"
+                      >
+                        <div className="flex flex-col gap-3">
+                          <div className="flex justify-between items-start">
+                            <div className="w-12 h-12 rounded-2xl bg-slate-950 border border-white/5 flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+                              {plugin.icon}
+                            </div>
+                            <span className="text-[9px] font-black uppercase text-slate-500 bg-slate-900 px-2 py-0.5 rounded-md border border-white/5">
+                              {plugin.category}
+                            </span>
+                          </div>
+                          <div>
+                            <h4 className="text-md font-bold text-white group-hover:text-emerald-400 transition-colors">{plugin.name}</h4>
+                            <p className="text-xs text-slate-400 mt-1 font-semibold leading-snug">{plugin.desc}</p>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-white/5 pt-3.5 flex justify-between items-center text-xs font-bold">
+                          {isInstalled ? (
+                            <span className="text-emerald-400 text-[11px] font-extrabold flex items-center gap-1">
+                              ✓ Installed & Synced
+                            </span>
+                          ) : (
+                            <span className="text-slate-500 text-[10px] uppercase font-mono">
+                              Available Plugin
+                            </span>
+                          )}
+
+                          <button
+                            onClick={() => {
+                              setActivePluginModal(plugin);
+                              setPluginConfig({});
+                              setTestResult(null);
+                            }}
+                            className={`px-4 py-2 rounded-xl text-[10px] font-black tracking-wider uppercase transition-all cursor-pointer ${
+                              isInstalled
+                                ? "bg-slate-900 border border-white/5 text-slate-300 hover:text-white"
+                                : "bg-emerald-500 text-slate-950 shadow-md hover:bg-emerald-400"
+                            }`}
+                          >
+                            {isInstalled ? "Configure" : "Install Plugin"}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* PLUGIN SETUP & TEST MODAL */}
+              {activePluginModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md animate-fade-in">
+                  <form onSubmit={handleSaveIntegration} className="bg-brand-card border border-brand-border w-full max-w-lg rounded-3xl p-6 shadow-2xl relative flex flex-col gap-6">
+                    <button
+                      type="button"
+                      onClick={() => setActivePluginModal(null)}
+                      className="absolute top-4 right-4 text-slate-400 hover:text-white cursor-pointer w-8 h-8 rounded-full hover:bg-white/5 flex items-center justify-center transition-colors"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-950 border border-white/5 flex items-center justify-center text-2xl">
+                        {activePluginModal.icon}
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-black text-white">{activePluginModal.name}</h3>
+                        <p className="text-xs text-slate-400 font-semibold">Home Assistant Integration Wizard</p>
+                      </div>
+                    </div>
+
+                    {/* Form Fields */}
+                    <div className="flex flex-col gap-4">
+                      {activePluginModal.fields.map(field => (
+                        <div key={field.key} className="flex flex-col gap-1.5">
+                          <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">{field.label}</label>
+                          <input
+                            type="text"
+                            required
+                            value={pluginConfig[field.key] || ""}
+                            onChange={(e) => setPluginConfig({ ...pluginConfig, [field.key]: e.target.value })}
+                            placeholder={field.placeholder}
+                            className="px-4 py-3 rounded-xl bg-slate-950/60 border border-white/5 focus:border-emerald-500/50 text-white text-xs font-semibold outline-none"
+                          />
+                        </div>
+                      ))}
+
+                      {/* Test Connection Feedback */}
+                      {testResult && (
+                        <div className={`p-3.5 rounded-xl border text-xs font-semibold flex items-center gap-2.5 ${
+                          testResult.success
+                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                            : "bg-red-500/10 text-red-400 border-red-500/20"
+                        }`}>
+                          <span className={`w-2 h-2 rounded-full ${testResult.success ? "bg-emerald-500" : "bg-red-500"}`}></span>
+                          {testResult.message}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="border-t border-white/5 pt-4 flex items-center justify-between font-bold text-xs select-none">
+                      <button
+                        type="button"
+                        onClick={handleTestPluginConnection}
+                        disabled={testingConnection}
+                        className="px-4 py-2.5 rounded-xl border border-white/5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white cursor-pointer disabled:opacity-50"
+                      >
+                        {testingConnection ? "Testing..." : "Test Connection"}
+                      </button>
+
+                      <div className="flex gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setActivePluginModal(null)}
+                          className="px-4 py-2.5 rounded-xl border border-white/5 text-slate-400 hover:text-white cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-5 py-2.5 rounded-xl cursor-pointer"
+                        >
+                          Save & Sync Entities
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import NotificationBell from "../common/NotificationBell";
 
 const Navbar = () => {
   const location = useLocation();
@@ -18,6 +19,10 @@ const Navbar = () => {
         return "Connected Datasources";
       case "/alerts":
         return "Alert Center";
+      case "/home-automation":
+        return "Home Automation";
+      case "/designforge":
+        return "DesignForge ERP";
       case "/admin":
         return "Administration Space";
       default:
@@ -48,7 +53,10 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-5">
+        {/* Notification Bell */}
+        <NotificationBell />
+
         {/* Clock */}
         <div className="hidden md:flex items-center gap-2 text-xs font-medium text-slate-400 bg-slate-900/40 border border-brand-border px-3.5 py-1.5 rounded-xl font-mono">
           <span className="text-emerald-500">SYSTEM:</span>
